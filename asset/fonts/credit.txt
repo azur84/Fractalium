@@ -1,0 +1,18 @@
+ALL fonts come from "https://www.dafont.com".
+Thank you to the font designers.
+
+"Blocked" (http://fontstruct.com/fontstructions/show/482418) created by "Sabata" with fontstruct LICENSE (http://creativecommons.org/licenses/by-sa/3.0/)
+"Forced Square" by "Friendly Fonts"
+"G-Type" by "Goma Shin"
+"Inversion" by "Avery Byrd"
+"Minercraftory" by "Jayvee Enaguas"
+"pixel digivolve" by "Pixel Sagas" LICENSE "pixel_digivolve/Font License.txt"
+"Pointless" by "LukeMans"
+"Pro Lamina" by "CabreraTypo"
+"Rektec" by "Axel Lymphos"
+"Replay" by "Christofer Lundholm"
+"Squared Display" by "Vikas Kumar"
+"SquareFont" by "Bou Fonts"
+"Suplex" par "Helge Barske"
+"symtext" by "Pixel Sagas" LICENSE "symtext/Font License.txt"
+

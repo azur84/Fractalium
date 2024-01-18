@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fractalium instance</title>
+    <link rel="stylesheet" href="../index.css" />
+    <link rel="stylesheet" href="./InstanceManager.css" />
+    <script src="./InstanceManager.js"></script>
+  </head>
+
+  <body>
+    <dialog id="chooseversion">
+      <div id="allversion"></div>
+    </dialog>
+    <dialog id="addmodpackmodal" class="addmodpackmodal">
+      <div class="imgh2right">
+        <h2>
+          New Intance<img
+            src="../asset/image/mono 256 white.png"
+            title="Change icon"
+            height="96"
+            width="96"
+            class="crlogo"
+            id="changeicon"
+          />
+        </h2>
+      </div>
+      <p>Name</p>
+      <input
+        type="text"
+        name=""
+        id="name"
+        class="createtext name"
+        maxlength="20"
+        title="Character : A-Z a-z 0-9 _"
+        placeholder="Character : A-Z a-z 0-9 _"
+      />
+      <p>Nickname</p>
+      <input type="text" name="" id="nickname" class="createtext" /><br /><br />
+      <button id="chooseversion">Choose version</button>
+      <p>Decription</p>
+      <textarea
+        name=""
+        id="decription"
+        cols="30"
+        rows="10"
+        class="createdecription"
+      ></textarea
+      ><br /><br />
+      <button id="createinstance">Create</button>
+    </dialog>
+    <div id="instancelist" class="instancelist">
+      <div class="instance" id="add">
+        <h1>add<br />instance</h1>
+        <img src="../asset/image/mono 256 white.png" alt="" id="addmodpack" />
+        <div>
+          <p>create your modpack or import with a zip files.</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

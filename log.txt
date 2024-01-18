@@ -1,0 +1,10 @@
+'eyJraWQiOiJhYzg0YSIsImFsZyI6IkhTMjU2In0.eyJ4dWlkIjoiMjUzNTQzMDkzMjM4MTIzMyIsImFnZyI6IkNoaWxkIiwic3ViIjoiZTQ0NmIwNzktZmI5Mi00NGZhLWIzYzctYzZiN2YyYmNjZTFkIiwiYXV0aCI6IlhCT1giLCJucyI6ImRlZmF1bHQiLCJyb2xlcyI6W10sImlzcyI6ImF1dGhlbnRpY2F0aW9uIiwiZmxhZ3MiOlsidHdvZmFjdG9yYXV0aCIsIm1zYW1pZ3JhdGlvbl9zdGFnZTQiLCJvcmRlcnNfMjAyMiJdLCJwcm9maWxlcyI6eyJtYyI6IjI2NTQyOTQyLTA2OWMtNDkwNS1iNGJlLWE0ZjE3MTllOTY0MiJ9LCJwbGF0Zm9ybSI6IlVOS05PV04iLCJ5dWlkIjoiZmExZjdmN2IyNTFjNGM0NGJmOWM4YzY2NTZiNjE0ODEiLCJuYmYiOjE2OTk5MDA5ODgsImV4cCI6MTY5OTk4NzM4OCwiaWF0IjoxNjk5OTAwOTg4fQ.Dvv7GlJrIAk4siEB8c6-Y9lHCh3h_vXRTK0cQu7c2Xw'
+'f8542e-e51a22-8bb704-eb536e-fc1a56'
+arguments 	Object 	Emitted when launch arguments are set for the Minecraft Jar.
+data 	String 	Emitted when information is returned from the Minecraft Process
+close 	Integer 	Code number that is returned by the Minecraft Process
+package-extract 	null 	Emitted when clientPackage finishes being extracted
+download 	String 	Emitted when a file successfully downloads
+download-status 	Object 	Emitted when data is received while downloading
+debug 	String 	Emitted when functions occur, made to help debug if errors occur
+progress 	Object 	Emitted when files are being downloaded in order. (Assets, Forge, Natives, Classes)

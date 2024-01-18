@@ -1,0 +1,70 @@
+{
+    "vanilla": {
+        "1.20.4": {
+            "method": "vanilla",
+            "mcversion": {
+                "number": "1.20.4",
+                "type": "release"
+            }
+        }
+    },
+    "forge": {
+        "1.20.2": {
+            "48.1.0": {
+                "method": "forge",
+                "link": "https://maven.minecraftforge.net/net/minecraftforge/forge/1.20.2-48.1.0/forge-1.20.2-48.1.0-installer.jar",
+                "mcversion": {
+                    "number": "1.20.2",
+                    "type": "release"
+                },
+                "modloader": {
+                    "name": "forge",
+                    "version": "48.1.0"
+                }
+            }
+        }
+    },
+    "fabric": {
+        "1.20.4": {
+            "0.15.3": {
+                "method": "CMD",
+                "type": "fabric",
+                "mcversion": {
+                    "number": "1.20.4",
+                    "type": "release"
+                },
+                "modloader": {
+                    "name": "fabric",
+                    "version": "0.15.3"
+                }
+            }
+        },
+        "installer": "https://maven.fabricmc.net/net/fabricmc/fabric-installer/1.0.0/fabric-installer-1.0.0.jar"
+    },
+    "Custom Cmd": {
+        "method": "CMD",
+        "type": "custom",
+        "command":"client -mc 1.20.4 -version 1.0",
+        "mcversion": {
+            "number": "1.20.4",
+            "type": "release"
+        },
+        "modloader": {
+            "name": "custom",
+            "version": "1.0",
+            "custom": "custom-1.0-1.20.4"
+        }
+    },
+    "Custom": {
+        "method": "custom",
+        "mcversion": {
+            "number": "1.20.4",
+            "type": "release"
+        },
+        "modloader": {
+            "name": "custom",
+            "version": "1.0",
+            "custom": "custom-1.0-1.20.4"
+        }
+    }
+}

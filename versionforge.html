@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>version forge</title>
+</head>
+
+<body>
+    <script>
+        let invi = JSON.parse(window.localStorage.getItem("invi")) || []
+        function getVersion(stringVersions) {
+            if (stringVersions.includes("-")) {
+                const [debut, fin] = stringVersions
+                    .split("-")
+                    .map((version) => version.trim());
+                const versions = [];
+                const debutSplit = debut.split(".");
+                const finSplit = fin.split(".");
+                for (
+                    let i = parseInt(debutSplit[2]);
+                    i <= parseInt(finSplit[2]);
+                    i++
+                ) {
+                    const version = `${debutSplit[0]}.${debutSplit[1]}.${i}`;
+                    versions.push(version);
+                }
+                return versions;
+            } else if (stringVersions.includes(",")) {
+                return stringVersions.split(",").map((version) => version.trim());
+            } else {
+                return [stringVersions.trim()];
+            }
+        }
+        function forgeLink(version, type) {
+            switch (type) {
+                case "uni":
+                    return `https://maven.minecraftforge.net/net/minecraftforge/forge/${version}/forge-${version}-universal.jar`
+                    break;
+                case "ins":
+                    return `https://maven.minecraftforge.net/net/minecraftforge/forge/${version}/forge-${version}-installer.jar`
+                    break;
+                default:
+                    break;
+            }
+        }
+        function reload() {
+            const fun = document.getElementById("fun")
+            fun.innerText = JSON.stringify(forge, null, 4)
+            let text = fun.innerHTML.replace(/<br>/g, "</p><p>")
+            fun.innerHTML = `<p>${text}</p>`
+            fun.querySelectorAll("p").forEach((e) => {
+                if (e.innerHTML.includes('{')) {
+                    e.innerHTML = `<button class="mi">\<</button>${e.innerHTML}`
+                    const buto = e.querySelector("button")
+                    buto.addEventListener("click", (event) => {
+                        if (event.ctrlKey) {
+                            let a = 1
+                            for (let i = e.nextElementSibling; a !== 0; i = i.nextElementSibling) {
+                                if (i.innerHTML.includes("{")) {
+                                    a = a + 1
+                                }
+                                if (i.innerHTML.includes("}")) {
+                                    a = a - 1
+                                }
+                                if (!i.classList.contains("invi")) {
+                                    try {
+                                        if (a == 2) {
+                                            i.querySelector("button").click()
+                                        }
+                                    } catch (error) { }
+                                }
+                            }
+                        } else {
+                            let a = 1
+                            if (invi.includes(e.textContent)) {
+                                delete [invi.indexOf(e.textContent)]
+                            } else {
+                                invi.push(e.textContent)
+                            }
+                            for (let i = e.nextElementSibling; a !== 0; i = i.nextElementSibling) {
+                                if (i.innerHTML.includes("{")) {
+                                    a = a + 1
+                                }
+                                if (i.innerHTML.includes("}")) {
+                                    a = a - 1
+                                }
+                                i.classList.toggle("invi")
+                            }
+                        }
+
+                    })
+                }
+            })
+            Array.from(fun.querySelectorAll("p")).forEach((ei) => {
+                if (invi.includes(ei.textContent)) {
+                    try {
+                        ei.querySelector("button").click()
+                    } catch (error) { }
+                }
+
+            })
+            window.localStorage.setItem("forge", JSON.stringify(forge))
+            window.localStorage.setItem("invi", JSON.stringify(invi))
+        }
+        function megaforger(forger, version) {
+            let ff = forger.split(version)
+            delete ff[0]
+            let newforger = []
+            ff.forEach((e) => {
+                newforger.push(`${version}${e}`)
+            })
+            newforger.reverse()
+            add(undefined, newforger)
+            return newforger
+        }
+        function add(mcversion = document.getElementById("minecraftversion").value, forgeversion = getVersion(document.getElementById("forgeversion").value), type = document.getElementById("type").value) {
+            if (!forge[mcversion]) forge[mcversion] = {}
+            forgeversion.forEach((e) => {
+                forge[mcversion][e] = {
+                    method: "forge",
+                    link: forgeLink(`${mcversion}-${e}`, type),
+                    mcversion: {
+                        number: mcversion,
+                        type: "release",
+                    },
+                    modloader: {
+                        name: "forge",
+                        version: e,
+                    },
+                };
+            });
+            reload()
+        }
+
+        let forge = JSON.parse(window.localStorage.getItem("forge")) || {}
+        document.addEventListener("DOMContentLoaded", () => {
+            reload()
+            document.getElementById("add").addEventListener("click", () => {
+                add()
+            });
+            document.getElementById("reload").addEventListener("click", (event) => {
+                if (event.ctrlKey) {
+                    invi = []
+                }
+                reload()
+            });
+            document.getElementById('download').addEventListener('click', () => {
+                const blob = new Blob([JSON.stringify(forge)], { type: 'text/plain' })
+                const url = URL.createObjectURL(blob)
+                const a = document.createElement('a')
+                a.href = url
+                a.download = 'forge.json'
+                document.body.appendChild(a)
+                a.click()
+                document.body.removeChild(a)
+                URL.revokeObjectURL(url)
+            });
+        });
+    </script>
+    <style>
+        p {
+            transition: background-color 0.3s ease-in-out;
+            background-color: whitesmoke;
+            margin: 0;
+            position: relative;
+        }
+
+        p:hover {
+            background-color: grey;
+        }
+
+        .mi {
+            position: absolute;
+            content: ">";
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+        }
+
+        p:hover .mi {
+            opacity: 1;
+        }
+
+        .invi {
+            display: none;
+        }
+    </style>
+    <input type="text" name="" id="minecraftversion" placeholder="mcversion" /><input type="text" id="type"
+        placeholder="type">
+    <input type="text" id="forgeversion" placeholder="forgeversion" /><button id="add">add</button>
+    <button id="reload">reload</button><button id="download">download</button>
+    <div style="white-space: pre;" id="fun"></div>
+</body>
+
+</html>

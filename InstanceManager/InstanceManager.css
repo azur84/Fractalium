@@ -1,0 +1,153 @@
+@font-face {
+    font-family: "Forced Square";
+    src: url("../asset/fonts/forced_square/FORCED\ SQUARE.ttf");
+}
+@font-face {
+    font-family: "Squared Display";
+    src: url("../asset/fonts/squared_display/Squared\ Display.ttf");
+}
+
+.instancelist {
+    display: flex;
+    flex-flow: wrap;
+    justify-content: flex-start;
+}
+
+.instancelist div.instance {
+    margin: 10px;
+    padding: 10px;
+    background: var(--modalcolor);
+    width: 256px;
+    height: 256px;
+    border-radius: 10px;
+    position: relative;
+}
+
+.instancelist div.instance:hover {
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+.instancelist div.instance img {
+    width: 256px;
+    height: 256px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+/* .instancelist div.instance:hover img {} */
+
+.instancelist div.instance div {
+    height: 0px;
+    width: 256px;
+    border-radius: 10px;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+    padding: 10px;
+    position: absolute;
+    right: 0px;
+    background: var(--modalcolor);
+    transition-property: height, visibility;
+    transition-duration: 0.1s;
+    transition-timing-function: ease-in-out;
+    transition-delay: 0s;
+    visibility: hidden;
+}
+
+.instancelist div.instance:hover div {
+    height: 300px;
+    transition-duration: 0.3s;
+    transition-delay: 0;
+    visibility: visible;
+}
+
+.instancelist div.instance h1 {
+    transition-property: opacity;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-in-out;
+    position: absolute;
+    color: white;
+    mix-blend-mode: exclusion;
+    text-align: center;
+    width: 256px;
+    top: 100px;
+    opacity: 0;
+    font-family: "Forced Square";
+}
+
+.instancelist div.instance:hover h1 {
+    opacity: 1;
+    transition-duration: 0.1s;
+}
+
+.instancelist div.instance div p {
+    font-family: "Forced Square";
+    color: var(--textcolor);
+    text-align: center;
+    transition-property: opacity;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-in-out;
+    opacity: 0;
+    font-size: 30px;
+}
+
+.instancelist div.instance:hover div p {
+    opacity: 1;
+}
+
+.addmodpackmodal {
+    background-color: var(--modalcolor);
+    color: var(--textcolor);
+    border: none;
+    font-family: "Squared Display";
+    width: 300px;
+    height: 455px;
+}
+
+.addmodpackmodal p{
+    font-family: "Forced Square";
+}
+
+.addmodpackmodal .createdecription {
+    resize: none;
+    font-family: "Forced Square";
+}
+
+.addmodpackmodal input {
+    font-family: "Forced Square";
+    width: 180px;
+}
+
+.addmodpackmodal button {
+    background-color: var(--textcolor);
+    color: var(--modalcolor);
+    font-family: "Forced Square";
+}
+
+.addmodpackmodal button:hover {
+    border-style: groove;
+    background-color: grey;
+}
+
+.imgh2right {
+    /* display: flex;
+    align-items: center; */
+    position: relative;
+
+}
+
+.crlogo {
+    transition-property: background-color, filter;
+    transition-duration: 0.5s;
+    transition-timing-function: ease-in-out;
+    position: absolute;
+    right: 0px;
+    top: -21px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.crlogo:hover {
+    filter: grayscale(80%);
+    background-color: grey;
+}

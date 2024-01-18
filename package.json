@@ -1,0 +1,30 @@
+{
+  "name": "fractaliumlauncher",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/azur84/fratalium-launcher.git"
+  },
+  "author": "azur84, Fractalium Team",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/azur84/fratalium-launcher/issues"
+  },
+  "homepage": "https://github.com/azur84/fratalium-launcher#readme",
+  "dependencies": {
+    "adm-zip": "^0.5.10",
+    "axios": "^1.6.1",
+    "electron": "^27.0.4",
+    "minecraft-launcher-core": "^3.17.3",
+    "msmc": "^4.1.0",
+    "tar": "^6.2.0",
+    "xml2js": "^0.6.2",
+    "zlib": "^1.0.5"
+  }
+}

@@ -1,0 +1,18 @@
+:root {
+    --textcolor: whitesmoke;
+    --modifiedtextcolor: rgb(180, 180, 180);
+    --modalcolor: black;
+    --background: rgb(34, 34, 34);
+    --searchBarcolor: black;
+}
+
+body {
+    background: var(--background);
+}
+
+.loader {
+    background: black;
+}
+.loader::backdrop {
+    background: black;
+}

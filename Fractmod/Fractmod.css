@@ -1,0 +1,262 @@
+:root {
+    --textcolor: whitesmoke;
+    --modifiedtextcolor: rgb(180, 180, 180);
+    --modalcolor: black;
+    --background: rgb(34, 34, 34);
+    --searchBarcolor: black;
+}
+
+@font-face {
+    font-family: "Pointless";
+    src: url("../asset/fonts/pointless_2/Pointless.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Squared";
+    src: url("../asset/fonts/squared_display/Squared Display.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Digivolve";
+    src: url("../asset/fonts/pixel_digivolve/Pixel\ Digivolve.otf");
+}
+@font-face {
+    font-family: "Digivolve Italic";
+    src: url("../asset/fonts/pixel_digivolve/Pixel\ Digivolve\ Italic.otf");
+}
+
+body {
+    text-align: center;
+    background: var(--background);
+    overflow-x: clip;
+}
+
+.modlist {
+    display: flex;
+    flex-flow: wrap;
+    justify-content: space-around;
+    transition: height 0.3s ease-in-out;
+}
+
+.moddiv {
+    transition: width 1s ease-in-out, filter 1s ease-in-out 0.5s;
+    border-radius: 10px;
+    margin: 10px;
+    height: min-content;
+    width: min-content;
+    position: relative;
+    text-align: center;
+}
+
+.moddiv:hover .modal {
+    transition: height 0.3s ease-in-out, width 0.3s ease-in-out,
+        color 0.3s ease-in-out 0.3s;
+    visibility: visible;
+    color: var(--textcolor);
+    width: 276px;
+    height: 600px;
+    background-color: var(--modalcolor);
+}
+
+.logo {
+    /* transition: filter 0.3s ease-in-out;
+        filter: blur(0px); */
+    border-radius: 10px;
+    position: relative;
+    z-index: 0;
+}
+
+.moddiv:hover .logo {
+    /* filter: blur(4px); */
+    z-index: 2;
+    cursor: pointer;
+}
+
+.modal {
+    transition: none;
+    color: transparent;
+    position: absolute;
+    visibility: hidden;
+    width: 0px;
+    height: 0px;
+    top: -10px;
+    left: -10px;
+    z-index: 1;
+    border-radius: 10px;
+}
+
+.cacheModal {
+    height: 256px;
+    width: 256px;
+    margin: 10px;
+}
+
+.modtitle {
+    font-family: "Pointless";
+    text-align: center;
+    font-size: 1em;
+}
+
+.summaryMod {
+    font-family: "Squared";
+    text-align: center;
+    font-size: 1.3em;
+    font-style: oblique;
+    font-weight: bolder;
+}
+
+.downloadMod {
+    font-family: "Squared";
+    text-align: center;
+    font-size: 1em;
+    font-style: oblique;
+}
+
+.searchBar {
+    background-color: var(--searchBarcolor);
+    color: var(--textcolor);
+    width: 700px;
+    height: 40px;
+    border-style: groove;
+    border-width: 5px;
+    border-right-width: 0px;
+    font-family: "Squared";
+    font-style: oblique;
+    font-size: 1.6em;
+}
+
+.button {
+    height: 40px;
+    font-family: "Pointless";
+    font-size: 0.55em;
+    border-style: groove;
+    border-width: 5px;
+    border-left-width: 0px;
+    background-color: var(--searchBarcolor);
+    color: var(--textcolor);
+    cursor: pointer;
+}
+
+.moddiv.load {
+    transition: height 0.3s ease-in-out;
+    filter: opacity(0%);
+}
+
+.loadingh {
+    font-family: "Pointless";
+    text-align: center;
+    font-size: 1em;
+    color: var(--textcolor);
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+.modmodal.trans {
+    width: 0%;
+    height: 0%;
+    filter: opacity(0%);
+}
+
+.modmodal {
+    background-color: var(--modalcolor);
+    border-radius: 5px;
+    border-style: groove;
+    transition: width 0.3s ease-in-out, height 0.3s ease-in-out;
+    width: 90%;
+    height: 90%;
+    text-align: left;
+    font-family: "Squared";
+    font-size: 1.3em;
+    font-style: oblique;
+    font-weight: bolder;
+}
+
+.modmodal::backdrop {
+    background: grey;
+    opacity: 0.1;
+}
+
+.logomod {
+    border-radius: 5px;
+}
+
+.over {
+    overflow: hidden;
+}
+
+.des {
+    color: var(--textcolor);
+    border-radius: 3px;
+}
+
+.des a {
+    color: var(--modifiedtextcolor);
+    font-style: italic;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.onglet button {
+    background-color: var(--background);
+    color: var(--textcolor);
+    transition-property: width, text-decoration, border-bottom, color;
+    transition-duration: 0.5s;
+    cursor: pointer;
+    width: 150px;
+    font-family: "prolamina";
+    border: 3px whitesmoke groove;
+    font-family: "Digivolve";
+}
+
+.onglet button:disabled {
+    background-color: var(--modalcolor);
+    color: var(--modifiedtextcolor);
+    font-family: "Digivolve Italic";
+    text-decoration: underline var(--textcolor);
+    cursor: default;
+    width: 250px;
+    border-bottom: none;
+}
+
+.des table {
+    border: 3px whitesmoke groove;
+}
+
+.des table .entete th {
+    transition-property: width, background-color;
+    transition-duration: 0.5s;
+    text-align: center;
+}
+
+.des table .entete th:hover {
+    background-color: grey;
+}
+
+.des table .file td {
+    transition-property: width, background-color;
+    transition-duration: 0.5s;
+}
+
+.des table .file td:hover {
+    background-color: grey;
+}
+
+.des table .file .typefile {
+    text-align: center;
+}
+
+.des table .file .gameversion {
+    text-align: center;
+}
+
+.fileicon {
+    width: 16px;
+    height: 16px;
+}
+
+.mllogo {
+    width: 16px;
+    height: 16px;
+}
