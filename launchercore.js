@@ -523,6 +523,7 @@ function getConfigJson() {
     } catch (error) {
         console.error(error)
         createVersionsJson()
+        installJre()
         const defaultconfig = {
             ram: {
                 min: "1G",
