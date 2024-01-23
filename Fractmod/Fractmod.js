@@ -2,16 +2,48 @@ var index = 0
 var activ = false
 var lasted = undefined
 var indexfile = 0
-var instance = {}
+var instance
 try {
-    window.instance.getinstance().then((e) => {
-        if (e.length == 0) {
-            console.error("noinstance")
+    window.Fractmod.handle()
+} catch (err) {
+    console.error(err)
+}
+
+var instancePro = new Promise(async (resolve, reject) => {
+    try {
+        const instances = await window.Instance.getinstance()
+        if (instances.length == 0) {
+            console.error("no instance")
+            reject("no instance")
         }
-        instance = e[0]
-    })
-} catch (error) {
-    throw error
+        resolve(instances[0])
+    } catch (error) {
+        throw error
+    }
+})
+instancePro.then((e) => {
+    instance = e
+})
+
+const apikey = window.Api.curse
+const curseModloader = {
+    any: 0,
+    forge: 1,
+    cauldron: 2,
+    liteloader: 3,
+    fabric: 4,
+    quilt: 5,
+    neoforge: 6
+}
+
+
+function getVersionObject(version) {
+    const list = version.split("-")
+    return {
+        modloader: list[0],
+        mcversion: list[1],
+        modloaderversion: list[2]
+    }
 }
 
 async function search(option) {
@@ -25,7 +57,7 @@ async function search(option) {
         url = url.slice(0, -1)
         const headers = {
             "Accept": "application/json",
-            "x-api-key": "$2a$10$uHIGihNLSStvfrl5Kg/RXOaa8ZoGDxugwV6gQ29LQiBknkcvPD3Kq",
+            "x-api-key": apikey,
         };
 
         fetch(url, {
@@ -105,7 +137,7 @@ async function curce(lien) {
     return new Promise((resolve, reject) => {
         const headers = {
             "Accept": "application/json",
-            "x-api-key": "$2a$10$uHIGihNLSStvfrl5Kg/RXOaa8ZoGDxugwV6gQ29LQiBknkcvPD3Kq",
+            "x-api-key": apikey,
         };
 
         fetch(`https://api.curseforge.com/${lien}`, {
@@ -238,15 +270,26 @@ async function modal(e) {
                     downloadcosttd.title = e.downloadCount
                     // download
                     let download = ligne.appendChild(document.createElement("td"))
+                    download.classList.add("download")
                     let downloadbut = download.appendChild(document.createElement("button"))
-                    downloadbut.classList.add("download")
+                    downloadbut.classList.add("downloadbut")
+                    downloadbut.title = 'Download this version'
+                    downloadbut.id = `downloadbutton${e.fileName}`
                     downloadbut.disabled = instance.mods.some((m) => e.fileName == m.name)
-                    download.addEventListener("click", () => {
+                    if (downloadbut.disabled) downloadbut.title = 'Version downloaded'
+                    downloadbut.addEventListener("click", () => {
                         if (instance.mods.some((m) => e.fileName == m.name)) return
                         try {
-                            window.Fractmod.downloadMod(e,instance).then((mm) => {
+                            window.Fractmod.downloadMod(e, instance).then((mm) => {
                                 instance.mods.push(mm.mod)
                                 downloadbut.disabled = true
+                                downloadbut.title = 'version downloaded'
+                                mm.remove.forEach((u) => {
+                                    instance.mods.splice(instance.mods.findIndex((p) => u.name == p.name), 1)
+                                    const button = document.getElementById(`downloadbutton${u.name}`)
+                                    button.disabled = false
+                                    button.title = 'Download this version'
+                                })
                             })
                         } catch (error) {
                             window.open(e.downloadUrl)
@@ -296,21 +339,28 @@ async function allMod(arg) {
         async (rep) => {
             const modlist = document.getElementById("mod")
             await rep.data.forEach(e => {
+                //div
                 let mod = modlist.appendChild(document.createElement("div"))
                 mod.setAttribute("class", "moddiv load")
+                //modal
                 let modall = mod.appendChild(document.createElement("div"))
                 modall.setAttribute("class", "modal")
+                //cachemodal
                 let cache = modall.appendChild(document.createElement("div"))
                 cache.setAttribute("class", "cacheModal")
+                //title
                 let title = modall.appendChild(document.createElement("h2"))
                 title.setAttribute("class", "modtitle")
                 title.textContent = e.name.replace(/\//g, '/\u200b').replace(/\(/g, "\u200b(").replace(/\[/g, "\u200b[").replace(/\&/g, "\u200b&")
+                //summary
                 let summary = modall.appendChild(document.createElement("p"))
                 summary.setAttribute("class", "summaryMod")
                 summary.textContent = e.summary.replace(/\//g, '/\u200b').replace(/\(/g, "\u200b(").replace(/\[/g, "\u200b[").replace(/\&/g, "\u200b&")
+                //download
                 let download = modall.appendChild(document.createElement("p"))
                 download.setAttribute("class", "downloadMod")
                 download.textContent = `${downloadcost(e.downloadCount)} download`
+                //logo
                 let img = mod.appendChild(document.createElement("img"))
                 img.setAttribute("class", "logo")
                 if (e.logo == undefined) {
@@ -323,25 +373,55 @@ async function allMod(arg) {
                 }, { once: true })
                 setTimeout(img.addEventListener("click", (event) => modal(e)), 100)
                 lasted = rep
-            });
+                //downloadbutton
+                let button = modall.appendChild(document.createElement("button"))
+                button.classList.add("downloadbut")
+                let releasefile
+                const instanceversion = getVersionObject(instance.config.version)
+                const link = `v1/mods/${e.id}/files?modLoaderType=${curseModloader[instanceversion.modloader]}&gameVersion=${instanceversion.mcversion}`
+                curce(link).then((files) => {
+                    releasefile = files.data[0]
+                    button.disabled = instance.mods.some((m) => releasefile.fileName == m.name)
+                    if (button.disabled) {
+                        button.textContent = ' Downloaded'
+                    } else {
+                        button.textContent = ' Download now'
+                    }
+                })
+                button.addEventListener("click", async () => {
+                    window.Fractmod.downloadMod(releasefile, instance).then((mm) => {
+                        instance.mods.push(mm.mod)
+                        button.disabled = true
+                        button.textContent = ' Downloaded'
+                        mm.remove.forEach((u) => {
+                            instance.mods.splice(instance.mods.findIndex((p) => u.name == p.name), 1)
+                        })
+                    }
+                    )
+                })
+            })
+
         }, (e) => {
 
         })
     activ = false
 }
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     function input() {
         const modlist = document.getElementById("mod")
         modlist.textContent = ""
         index = 0
         lasted = undefined
+        const version = getVersionObject(instance.config.version)
         const arg = {
             gameId: 432,
             index: 0,
             classId: 6,
             sortField: 2,
             sortOrder: "desc",
-            searchFilter: document.getElementById("modsearch").value
+            searchFilter: document.getElementById("modsearch").value,
+            gameVersion: version.mcversion,
+            modLoaderType: version.modloader
         }
         allMod(arg)
     }
@@ -358,28 +438,36 @@ document.addEventListener("DOMContentLoaded", () => {
             if (index + 50 > lasted.pagination.totalCount) {
                 return
             }
+            const version = getVersionObject(instance.config.version)
             const arg = {
                 gameId: 432,
                 index: index + 50,
                 classId: 6,
                 sortField: 2,
                 sortOrder: "desc",
-                searchFilter: document.getElementById("modsearch").value
+                searchFilter: document.getElementById("modsearch").value,
+                gameVersion: version.mcversion,
+                modLoaderType: version.modloader
             }
             index = index + 50
             allMod(arg)
         }
     })
     index = 0
-    const argdefaut = {
-        gameId: 432,
-        index: 0,
-        classId: 6,
-        sortField: 2,
-        sortOrder: "desc",
-        searchFilter: document.getElementById("modsearch").value
-    }
-    allMod(argdefaut)
+    instancePro.then((e) => {
+        const version = getVersionObject(e.config.version)
+        const argdefaut = {
+            gameId: 432,
+            index: 0,
+            classId: 6,
+            sortField: 2,
+            sortOrder: "desc",
+            searchFilter: document.getElementById("modsearch").value,
+            gameVersion: version.mcversion,
+            modLoaderType: version.modloader
+        }
+        allMod(argdefaut)
+    })
 })
 try {
     window.Fractmod.setinstance((event, instances) => {

@@ -20,6 +20,7 @@
     font-family: "Digivolve";
     src: url("../asset/fonts/pixel_digivolve/Pixel\ Digivolve.otf");
 }
+
 @font-face {
     font-family: "Digivolve Italic";
     src: url("../asset/fonts/pixel_digivolve/Pixel\ Digivolve\ Italic.otf");
@@ -83,6 +84,25 @@ body {
     left: -10px;
     z-index: 1;
     border-radius: 10px;
+}
+
+.modal .downloadbut {
+    filter: opacity(0);
+    font-family: "Squared";
+    text-align: center;
+    font-size: 1em;
+    font-style: oblique;
+    color: var(--textcolor);
+    background: var(--background);
+}
+
+.moddiv:hover .modal .downloadbut {
+    transition: filter 0.3s ease-in-out 0.3s, background 0.3s ease-in-out;
+    filter: opacity(1);
+}
+
+.modal .downloadbut:hover:enabled {
+    background: var(--modifiedtextcolor);
 }
 
 .cacheModal {
@@ -259,4 +279,21 @@ body {
 .mllogo {
     width: 16px;
     height: 16px;
+}
+
+.downloadbut:before {
+    content: url("../asset/image/arrow\ white.png");
+}
+
+.downloadbut:disabled:before {
+    content: url("../asset/image/check\ white.png");
+}
+
+.downloadbut {
+    background: none;
+    border: none;
+}
+
+.des table .file .download {
+    text-align: center;
 }

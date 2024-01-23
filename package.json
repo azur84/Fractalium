@@ -1,6 +1,6 @@
 {
   "name": "fractaliumlauncher",
-  "version": "1.0.0",
+  "version": "pre-alpha-0.0.1",
   "description": "",
   "main": "app.js",
   "scripts": {
@@ -20,6 +20,7 @@
   "dependencies": {
     "adm-zip": "^0.5.10",
     "axios": "^1.6.1",
+    "dotenv": "^16.3.1",
     "electron": "^27.0.4",
     "minecraft-launcher-core": "^3.17.3",
     "msmc": "^4.1.0",

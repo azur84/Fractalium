@@ -2,9 +2,15 @@
     font-family: "Forced Square";
     src: url("../asset/fonts/forced_square/FORCED\ SQUARE.ttf");
 }
+
 @font-face {
     font-family: "Squared Display";
     src: url("../asset/fonts/squared_display/Squared\ Display.ttf");
+}
+
+@font-face {
+    font-family: "Replay";
+    src: url("../asset/fonts/replay/replay.ttf");
 }
 
 .instancelist {
@@ -59,6 +65,7 @@
     transition-duration: 0.3s;
     transition-delay: 0;
     visibility: visible;
+    z-index: 1;
 }
 
 .instancelist div.instance h1 {
@@ -104,7 +111,7 @@
     height: 455px;
 }
 
-.addmodpackmodal p{
+.addmodpackmodal p {
     font-family: "Forced Square";
 }
 
@@ -125,7 +132,6 @@
 }
 
 .addmodpackmodal button:hover {
-    border-style: groove;
     background-color: grey;
 }
 
@@ -150,4 +156,31 @@
 .crlogo:hover {
     filter: grayscale(80%);
     background-color: grey;
+}
+
+.allversion {
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+}
+
+.chooseversion {
+    background: var(--modalcolor);
+    border-color: var(--textcolor);
+}
+
+.allversion button {
+    transition-property: background-color;
+    transition-timing-function: ease-in-out;
+    transition-duration: 0.3s;
+    margin: 5px;
+    background-color: var(--background);
+    color: var(--textcolor);
+    font-family: "Replay";
+    letter-spacing: 3px;
+    font-size: 1.1em;
+}
+
+.allversion button:hover {
+    background-color: var(--modifiedtextcolor);
 }

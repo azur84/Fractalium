@@ -1,4 +1,5 @@
 const { Client, Authenticator } = require('minecraft-launcher-core')
+const { Auth } = require("msmc")
 const { exec } = require('child_process');
 const { rmSync, existsSync, createWriteStream, mkdirSync, createReadStream, renameSync, readSync, readdirSync, writeFileSync, rmdirSync } = require('fs')
 const path = require("path")
@@ -6,12 +7,12 @@ const axios = require("axios")
 const { x } = require('tar');
 const { createGunzip } = require('zlib');
 const { homedir, platform, arch } = require('os')
-const configfile = require("./config.json")
 const AdmZip = require('adm-zip');
 const { parseString } = require('xml2js')
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, nativeImage } = require('electron');
 
 const versionfile = getVersionsJson()
+const configfile = getConfigJson()
 
 async function download(url, destination) {
     try {
@@ -124,7 +125,7 @@ function getFractaHome() {
 }
 
 function getVersionConfig(version) {
-    let configer = versionfile.minecraft
+    let configer = versionfile
     version.split("-").forEach((e) => {
         configer = configer[e]
     })
@@ -139,11 +140,18 @@ class Instance {
     fractaHome = process.env.fractaHome || getFractaHome()
     JrePath = getJrePath()
     constructor(name, version, config = configfile) {
+        if (typeof maVariable === "object" && maVariable !== null) {
+            auth().then((e) => {
+                this.opt.authorization = e.mclc()
+            })
+        } else {
+            Authenticator.getAuth(config.auth)
+        }
         this.opt = {
             root: this.fractaHome,
             cache: `${this.fractaHome}/cache`,
             memory: config.ram,
-            javaPath: `${this.fractaHome}/jdk/bin/java.exe`,
+            javaPath: getJrePath(),
             overrides: {
                 gameDirectory: `${this.fractaHome}/gameDirectory/${name}`
             },
@@ -155,10 +163,12 @@ class Instance {
     async setversion(version = this.version) {
         this.opt.version = version.mcversion
         switch (version.method) {
+            case "vanilla":
+                break
             case "forge":
                 if (!existsSync(`${this.fractaHome}/download/${version.modloader.name}/${version.modloader.version}.jar`)) {
                     mkdirSync(`${this.fractaHome}/download/${version.modloader.name}`, { recursive: true })
-                    await download(version.link, `${fractaHome}/download/${version.modloader.name}/${version.modloader.version}.jar`)
+                    await download(version.link, `${this.fractaHome}/download/${version.modloader.name}/${version.modloader.version}.jar`)
                 }
                 this.opt.forge = `${this.fractaHome}/download/${version.modloader.name}/${version.modloader.version}.jar`
                 this.opt.version.custom = `${version.modloader.name}-${version.modloader.version}`
@@ -218,7 +228,15 @@ class Instance {
                 this.opt.version.custom = version.modloader.custom
                 break
         }
-        console.log(`[version install] : minecraft:${version.mcversion.number} ${version.modloader.name}:${version.modloader.version}`)
+        let namemodloader
+        let versionmodloader
+        try {
+            namemodloader = version.modloader.name
+            versionmodloader = version.modloader.version
+        } catch (error) {
+            namemodloader = version.method
+        }
+        console.log(`[version install] : minecraft:${version.mcversion.number} ${namemodloader}:${versionmodloader || ""}`)
     }
     addAutoOn(logger) {
         this.client.on('download-status', (e) => {
@@ -498,11 +516,42 @@ function getVersionsJson(autoGenerate = true) {
     }
 }
 
+function getConfigJson() {
+    const fractaHome = process.env.fractaHome || getFractaHome()
+    try {
+        return require(path.join(fractaHome, "config.json"))
+    } catch (error) {
+        console.error(error)
+        createVersionsJson()
+        const defaultconfig = {
+            ram: {
+                min: "1G",
+                max: "1G"
+            }
+        }
+        writeFileSync(path.join(fractaHome, "config.json"), JSON.stringify(defaultconfig))
+    }
+}
+
+function auth(fast = true) {
+    return new Promise(async (resolve, reject) => {
+        let xboxManager
+        const icon = nativeImage.createFromPath(path.join("../", "asset", "image", "check.png")).resize({ height: 32, width: 32 })
+        const authManager = new Auth("select_account")
+        xboxManager = await authManager.launch("electron", {
+            icon: icon
+        })
+        resolve((await xboxManager.getMinecraft()).mclc(true))
+    })
+}
+
 module.exports = {
     getVersionsJson,
     Instance,
     installJre,
     getVersionConfig,
     loaderLaunch,
-    download
+    download,
+    auth,
+    getConfigJson
 }
