@@ -9,11 +9,3 @@
 body {
     background: var(--background);
 }
-
-.loader {
-    background: black;
-}
-
-.loader::backdrop {
-    background: black;
-}

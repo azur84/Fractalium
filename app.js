@@ -2,7 +2,7 @@ const { app, BrowserWindow, ipcMain, dialog, Menu, nativeImage, } = require('ele
 const { homedir, platform } = require('node:os');
 const path = require('node:path');
 const { existsSync, readdirSync, readFileSync, rmSync, mkdir, writeFile, mkdirSync, writeFileSync } = require('node:fs');
-const { getVersionConfig, Instance, loaderLaunch, download, getVersionsJson, auth, getConfigJson } = require('./launchercore');
+const { getVersionConfig, Instance, loaderLaunch, download, getVersionsJson, auth, getConfigJson, createVersionsJson, installJre, firstLaunch, crack } = require('./launchercore');
 require('dotenv').config();
 function getFractaHome() {
     const home = homedir()
@@ -29,7 +29,7 @@ function createBaseWindow() {
         height: 644,
         minWidth: 877,
         minHeight: 644,
-        icon: "./asset/image/mono 256.png",
+        icon: nativeImage.createFromPath(path.join(__dirname, 'asset', "image", 'mono 256.png')),
         title: "Fractalium loading...",
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
@@ -87,36 +87,45 @@ function createBaseWindow() {
                     submenu: [
                         {
                             label: "Prenium",
-                            click: () => {
-                                auth(false).then()
-
+                            click: (menu, winparent) => {
+                                auth(winparent).then((e) => {
+                                    const config = getConfigJson()
+                                    config.auth = e
+                                    writeFileSync(path.join(fractaHome, "config.json"), JSON.stringify(config))
+                                })
                             }
                         },
                         {
                             label: "Crack",
-                            click: async (e) => {
-                                const basewin = BrowserWindow.getFocusedWindow()
-                                const win = new BrowserWindow({
-                                    parent: basewin,
-                                    modal: true,
-                                    frame: false,
-                                    webPreferences: {
-                                        preload: path.join(__dirname, "auth", "preauth.js")
-                                    }
-                                })
-                                win.loadFile(path.join(__dirname, "auth", "auth.html"))
-                                ipcMain.handleOnce("auth:finish", (event, name) => {
-                                    const config = getConfigJson()
-                                    config.auth = name
-                                    writeFileSync(path.join(fractaHome, "config.json"), JSON.stringify(config))
-                                    win.close()
-                                })
+                            click: async (menu, winparent) => {
+                                crack(winparent)
                             }
                         }
                     ]
                 },
                 {
                     label: "Ram",
+                },
+                {
+                    label: "Reset",
+                    submenu: [
+                        {
+                            label: "Version.json",
+                            click: async (menu) => {
+                                menu.visible = false
+                                await createVersionsJson()
+                                menu.visible = true
+                            },
+                        },
+                        {
+                            label: "Jre",
+                            click: async (menu) => {
+                                menu.visible = false
+                                await installJre()
+                                menu.visible = true
+                            }
+                        }
+                    ]
                 }
             ]
         },
@@ -144,7 +153,13 @@ function newFractmod(event) {
 }
 
 app.whenReady().then(() => {
-    createBaseWindow()
+    if (!getConfigJson()) {
+        firstLaunch().then(() => {
+            createBaseWindow()
+        })
+    } else {
+        createBaseWindow()
+    }
     ipcMain.handle('instance:getinstance', getInstance)
     ipcMain.handle('instance:launch', startInstance)
     ipcMain.handle('Fractmod:downloadMod', downloadMod)
@@ -153,6 +168,7 @@ app.whenReady().then(() => {
     ipcMain.handle("Fractmod:getVersionConfig", getVersionConfigHandle)
     ipcMain.handle("Fractmod:setFractmod", newFractmod)
     ipcMain.handle("intance:newIntance", newInstance)
+    ipcMain.handle("Fractmod:open", openFractmod)
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
             createBaseWindow()
@@ -210,11 +226,14 @@ function startInstance(event, instance) {
                 BrowserWindow.getAllWindows().forEach((e) => {
                     e.show()
                 })
-                loader.win.close()
+                try {
+                    loader.win.close()
+                } catch (err) { }
             })
             resolve(pros)
         } catch (err) {
             console.error(err)
+            dialog.showErrorBox("Launch mc error", err)
         }
     })
 }
@@ -277,7 +296,7 @@ function getVersionConfigHandle(event, version) {
 }
 function newInstance(event, Object) {
     const instancepath = path.join(fractaHome, "gameDirectory", Object.name)
-    mkdirSync(instancepath, { recursive: true })
+    mkdirSync(path.join(instancepath, "mods"), { recursive: true })
     const configfile = {
         version: Object.version,
         nickname: Object.nickname,
@@ -286,6 +305,37 @@ function newInstance(event, Object) {
     }
     const configpath = path.join(instancepath, "config.json")
     writeFileSync(configpath, JSON.stringify(configfile))
+}
+function openFractmod(event, instance) {
+    const win = new BrowserWindow({
+        width: 877,
+        height: 644,
+        minWidth: 877,
+        minHeight: 644,
+        icon: nativeImage.createFromPath(path.join(__dirname, 'asset', "image", 'mono 256.png')),
+        title: "Fractalium loading...",
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
+        }
+    })
+    win.webContents.setWindowOpenHandler(({ url }) => {
+        return {
+            action: 'allow',
+            overrideBrowserWindowOptions: {
+                icon: "./asset/image/mono 256.png",
+                title: "Fractalium loading...",
+                autoHideMenuBar: true,
+                parent: win
+            }
+        }
+    })
+    win.loadFile(path.join(__dirname, "Fractmod", "Fractmod.html"))
+    ipcMain.handleOnce("Fractmod:handle", () => {
+        return new InstanceInfo({
+            name: instance,
+            path: path.join(fractaHome, "gameDirectory")
+        })
+    })
 }
 
 module.exports = {

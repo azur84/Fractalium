@@ -184,3 +184,16 @@
 .allversion button:hover {
     background-color: var(--modifiedtextcolor);
 }
+
+button {
+    transition: color 0.3s ease-in-out;
+    font-family: "Replay";
+    background: none;
+    border: none;
+    color: white;
+    text-align: center;
+}
+
+button:hover {
+    color:grey
+}

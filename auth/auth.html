@@ -7,13 +7,50 @@
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         document.querySelector("button").addEventListener("click", () => {
-          window.auth.finish(document.getElementById("name").value);
+          const name = document.getElementById("name").value;
+          if (!(name.match(/\w{3,16}/) == name)) return;
+          window.auth.finish(name);
         });
       });
     </script>
+    <style>
+      @font-face {
+        font-family: "square";
+        src: url("../asset/fonts/forced_square/FORCED\ SQUARE.ttf");
+      }
+      body {
+        text-align: center;
+      }
+      h1 {
+        font-family: "square";
+      }
+      input {
+        font-family: "square";
+      }
+      button {
+        transition-duration: 0.3s;
+        transition-property: color;
+        transition-timing-function: ease-in-out;
+        font-family: "square";
+        background: none;
+        border: none;
+        font-size: 1.5em;
+      }
+      button:hover {
+        color: grey;
+      }
+    </style>
   </head>
   <body>
-    <input type="text" name="" id="name" />
+    <h1>Your nickname</h1>
+    <input
+      type="text"
+      name=""
+      id="name"
+      maxlength="16"
+      title="Character : A-Z a-z 0-9 _"
+      placeholder="Character : A-Z a-z 0-9 _"
+    />
     <button>Valid</button>
   </body>
 </html>

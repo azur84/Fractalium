@@ -10,7 +10,8 @@ contextBridge.exposeInMainWorld('Fractmod', {
     setinstance: (inst) => ipcRenderer.on("Fractmod:Setinstance", inst),
     downloadMod: (mod, instance) => ipcRenderer.invoke("Fractmod:downloadMod", mod, instance),
     getVersionConfig: (version) => ipcRenderer.invoke("Fractmod:getVersionConfig", version),
-    handle: () => ipcRenderer.invoke("Fractmod:setFractmod")
+    getcurrentInstance: () => ipcRenderer.invoke("Fractmod:handle"),
+    open: (instance) => ipcRenderer.invoke("Fractmod:open",instance)
 })
 contextBridge.exposeInMainWorld('tool', {
     getFile: (type) => ipcRenderer.invoke("tool:getFile", type),

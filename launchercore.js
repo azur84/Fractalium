@@ -6,37 +6,40 @@ const path = require("path")
 const axios = require("axios")
 const { x } = require('tar');
 const { createGunzip } = require('zlib');
-const { homedir, platform, arch } = require('os')
+const { homedir, platform, arch, totalmem } = require('os')
 const AdmZip = require('adm-zip');
 const { parseString } = require('xml2js')
-const { app, BrowserWindow, ipcMain, nativeImage } = require('electron');
+const { app, BrowserWindow, ipcMain, nativeImage, dialog } = require('electron');
 
 const versionfile = getVersionsJson()
 const configfile = getConfigJson()
 
-async function download(url, destination) {
-    try {
-        const response = await axios({
-            method: 'get',
-            url: url,
-            responseType: 'stream',
-        });
-        const fileStream = createWriteStream(destination);
-        response.data.pipe(fileStream);
-        return new Promise((resolve, reject) => {
-            fileStream.on('finish', () => {
-                resolve(destination)
+function download(url, destination) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const response = await axios({
+                method: 'get',
+                url: url,
+                responseType: 'stream',
             });
+            const fileStream = createWriteStream(destination);
+            response.data.pipe(fileStream);
+            resolve(new Promise((resolve, reject) => {
+                fileStream.on('finish', () => {
+                    resolve(destination)
+                });
 
-            fileStream.on('error', err => {
-                console.error('Erreur lors du téléchargement du fichier :', err);
-                reject(err);
-            });
-        });
-    } catch (error) {
-        console.error('Erreur lors de la requête HTTP :', error);
-        throw error;
-    }
+                fileStream.on('error', err => {
+                    console.error('Erreur lors du téléchargement du fichier :', err);
+                    reject(err);
+                });
+            }));
+        } catch (error) {
+            console.error('Erreur lors de la requête HTTP :', error);
+            reject(error)
+        }
+    })
+
 }
 
 async function installJre(useplatform = platform(), usearch = arch()) {
@@ -51,7 +54,9 @@ async function installJre(useplatform = platform(), usearch = arch()) {
     if (existsSync(`${fractaHome}/jre`)) { rmSync(path.join(fractaHome, "jre"), { recursive: true }) }
     mkdirSync(`${fractaHome}/download`, { recursive: true })
     if (link.includes(".zip")) {
-        await download(link, `${fractaHome}/download/jre.zip`)
+        await download(link, `${fractaHome}/download/jre.zip`).catch((e) => {
+            dialog.showErrorBox("Jre install error", e)
+        })
         const zip = new AdmZip(`${fractaHome}/download/jre.zip`)
         await zip.extractAllTo(`${fractaHome}/download/jre`)
         renameSync(`${fractaHome}/download/jre/${readdirSync(`${fractaHome}/download/jre`)[0]}`, `${fractaHome}/jre`)
@@ -59,7 +64,9 @@ async function installJre(useplatform = platform(), usearch = arch()) {
         console.log("java install finish")
         return `${fractaHome}/jre`
     } else {
-        await download(link, `${fractaHome}/download/jre.tar.gz`)
+        await download(link, `${fractaHome}/download/jre.tar.gz`).catch((e) => {
+            dialog.showErrorBox("Jre install error", e)
+        })
         mkdirSync(`${fractaHome}/download/jre`, { recursive: true })
         return new Promise((resolve, reject) => {
             const targz = createReadStream(`${fractaHome}/download/jre.tar.gz`)
@@ -140,13 +147,6 @@ class Instance {
     fractaHome = process.env.fractaHome || getFractaHome()
     JrePath = getJrePath()
     constructor(name, version, config = configfile) {
-        if (typeof maVariable === "object" && maVariable !== null) {
-            auth().then((e) => {
-                this.opt.authorization = e.mclc()
-            })
-        } else {
-            Authenticator.getAuth(config.auth)
-        }
         this.opt = {
             root: this.fractaHome,
             cache: `${this.fractaHome}/cache`,
@@ -155,7 +155,15 @@ class Instance {
             overrides: {
                 gameDirectory: `${this.fractaHome}/gameDirectory/${name}`
             },
-            authorization: Authenticator.getAuth("azur")
+        }
+        if (typeof config.auth === "object" && config.auth !== null) {
+            if (Authenticator.validate(config.auth.access_token, config.auth.client_token)) {
+                this.opt.authorization = config.auth
+            } else {
+                this.opt.authorization = Authenticator.refreshAuth(config.auth.access_token, config.auth.client_token)
+            }
+        } else {
+            this.opt.authorization = Authenticator.getAuth(config.auth)
         }
         this.version = version
         this.config = config
@@ -522,8 +530,6 @@ function getConfigJson() {
         return require(path.join(fractaHome, "config.json"))
     } catch (error) {
         console.error(error)
-        createVersionsJson()
-        installJre()
         const defaultconfig = {
             ram: {
                 min: "1G",
@@ -534,16 +540,109 @@ function getConfigJson() {
     }
 }
 
-function auth(fast = true) {
+function auth(parent) {
     return new Promise(async (resolve, reject) => {
         let xboxManager
         const icon = nativeImage.createFromPath(path.join("../", "asset", "image", "check.png")).resize({ height: 32, width: 32 })
         const authManager = new Auth("select_account")
-        xboxManager = await authManager.launch("electron", {
+        const opt = {
             icon: icon
-        })
+        }
+        if (parent) {
+            opt.parent = parent
+            opt.modal = true
+        }
+        xboxManager = await authManager.launch("electron", opt)
         resolve((await xboxManager.getMinecraft()).mclc(true))
     })
+}
+
+function crack(winparent) {
+    return new Promise((resolve, reject) => {
+        const fractaHome = process.env.fractaHome || getFractaHome()
+        const basewin = winparent
+        const win = new BrowserWindow({
+            parent: basewin,
+            modal: true,
+            frame: false,
+            height:122,
+            width:254,
+            // resizable:false,
+            webPreferences: {
+                preload: path.join(__dirname, "auth", "preauth.js")
+            }
+        })
+        win.loadFile(path.join(__dirname, "auth", "auth.html"))
+        win.webContents.openDevTools()
+        ipcMain.handleOnce("auth:finish", (event, name) => {
+            const config = getConfigJson()
+            config.auth = name
+            writeFileSync(path.join(fractaHome, "config.json"), JSON.stringify(config))
+            win.close()
+            resolve(name)
+        })
+    })
+
+}
+
+function firstLaunch() {
+    return new Promise(async (resolve, reject) => {
+        const fractaHome = process.env.fractaHome || getFractaHome()
+        const win = new BrowserWindow({
+            width: 877,
+            height: 644,
+            minWidth: 877,
+            minHeight: 644,
+            icon: nativeImage.createFromPath(path.join(__dirname, 'asset', "image", 'mono 256.png')),
+            title: "Fractalium loading...",
+            webPreferences: {
+                preload: path.join(__dirname, "first_launch", "pre_first_launch.js")
+            }
+        })
+        win.loadFile(path.join(__dirname, "first_launch", "first_launch.html"))
+        ipcMain.handle("Firstlaunch:ram", () => {
+            return totalmem()
+        })
+        await new Promise((resolve, reject) => {
+            win.webContents.addListener("dom-ready", resolve)
+        })
+        await createVersionsJson()
+        await installJre()
+        // await new Promise((resolve, reject) => {
+        //     setTimeout(resolve, 20000)
+        // })
+        win.webContents.send("Firstlaunch:finishinstall")
+        const authuser = new Promise((resolve, reject) => {
+            ipcMain.handleOnce("Firstlaunch:auth", async (event, type) => {
+                if (type == "prenium") {
+                    const user = await auth(win)
+                    const config = getConfigJson()
+                    config.auth = user
+                    writeFileSync(path.join(fractaHome, "config.json"), JSON.stringify(config))
+                    resolve(user.name)
+                    return user.name
+                } else {
+                    const user = await crack(win)
+                    resolve(user)
+                    return user
+                }
+            })
+        })
+        await authuser
+        await new Promise((resolve, reject) => {
+            ipcMain.handleOnce('Firstlaunch:mcram', (params, ram) => {
+                const config = getConfigJson()
+                config.ram = ram
+                writeFileSync(path.join(fractaHome, "config.json"), JSON.stringify(config))
+                resolve()
+            })
+        })
+        ipcMain.handleOnce("Firstlaunch:stop", () => {
+            win.close()
+            resolve()
+        })
+    })
+
 }
 
 module.exports = {
@@ -554,5 +653,9 @@ module.exports = {
     loaderLaunch,
     download,
     auth,
-    getConfigJson
+    getConfigJson,
+    createVersionsJson,
+    firstLaunch,
+    installJre,
+    crack
 }

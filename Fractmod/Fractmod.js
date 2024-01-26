@@ -3,20 +3,11 @@ var activ = false
 var lasted = undefined
 var indexfile = 0
 var instance
-try {
-    window.Fractmod.handle()
-} catch (err) {
-    console.error(err)
-}
 
 var instancePro = new Promise(async (resolve, reject) => {
     try {
-        const instances = await window.Instance.getinstance()
-        if (instances.length == 0) {
-            console.error("no instance")
-            reject("no instance")
-        }
-        resolve(instances[0])
+        const instances = await window.Fractmod.getcurrentInstance()
+        resolve(instances)
     } catch (error) {
         throw error
     }
@@ -469,10 +460,3 @@ document.addEventListener("DOMContentLoaded", async () => {
         allMod(argdefaut)
     })
 })
-try {
-    window.Fractmod.setinstance((event, instances) => {
-        instance = instances
-    })
-} catch (error) {
-    throw error
-}
