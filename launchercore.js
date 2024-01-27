@@ -11,9 +11,6 @@ const AdmZip = require('adm-zip');
 const { parseString } = require('xml2js')
 const { app, BrowserWindow, ipcMain, nativeImage, dialog } = require('electron');
 
-const versionfile = getVersionsJson()
-const configfile = getConfigJson()
-
 function download(url, destination) {
     return new Promise(async (resolve, reject) => {
         try {
@@ -132,7 +129,7 @@ function getFractaHome() {
 }
 
 function getVersionConfig(version) {
-    let configer = versionfile
+    let configer = getVersionsJson()
     version.split("-").forEach((e) => {
         configer = configer[e]
     })
@@ -146,7 +143,7 @@ class Instance {
     config = {}
     fractaHome = process.env.fractaHome || getFractaHome()
     JrePath = getJrePath()
-    constructor(name, version, config = configfile) {
+    constructor(name, version, config = getConfigJson()) {
         this.opt = {
             root: this.fractaHome,
             cache: `${this.fractaHome}/cache`,
@@ -184,6 +181,7 @@ class Instance {
             case "CMD":
                 if (!existsSync(`${this.fractaHome}/download/${version.modloader.name}-installer.jar`)) {
                     mkdirSync(`${this.fractaHome}/download`, { recursive: true })
+                    const versionfile = getVersionsJson()
                     await download(versionfile[version.modloader.name].installer, `${this.fractaHome}/download/${version.type}-installer.jar`)
                 }
                 switch (version.type) {
@@ -504,6 +502,7 @@ async function generateVersionsObject() {
 
 async function createVersionsJson(reset = false) {
     let version = {}
+    const versionfile = getVersionsJson()
     if (!reset && versionfile) {
         version = versionfile
     }
@@ -529,7 +528,6 @@ function getConfigJson() {
     try {
         return require(path.join(fractaHome, "config.json"))
     } catch (error) {
-        console.error(error)
         const defaultconfig = {
             ram: {
                 min: "1G",
@@ -537,6 +535,7 @@ function getConfigJson() {
             }
         }
         writeFileSync(path.join(fractaHome, "config.json"), JSON.stringify(defaultconfig))
+        return false
     }
 }
 
