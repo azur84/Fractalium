@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog, Menu, nativeImage, } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, Menu, nativeImage, Tray } = require('electron');
 const { homedir, platform } = require('node:os');
 const path = require('node:path');
 const { existsSync, readdirSync, readFileSync, rmSync, mkdir, writeFile, mkdirSync, writeFileSync } = require('node:fs');
@@ -153,7 +153,8 @@ function newFractmod(event) {
 }
 
 app.whenReady().then(() => {
-    if (!getConfigJson()) {
+    const config = getConfigJson()
+    if (!config?.valid) {
         firstLaunch().then(() => {
             createBaseWindow()
         })
@@ -174,6 +175,7 @@ app.whenReady().then(() => {
             createBaseWindow()
         }
     })
+    tray()
 })
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
@@ -278,7 +280,6 @@ function getFile(event, type) {
                         { name: "Mod Icon", extensions: ["png"] }
                     ]
                 })
-                icon
                 if (icon.canceled) {
                     reject("canceled")
                 } else {
@@ -314,6 +315,7 @@ function openFractmod(event, instance) {
         minHeight: 644,
         icon: nativeImage.createFromPath(path.join(__dirname, 'asset', "image", 'mono 256.png')),
         title: "Fractalium loading...",
+        autoHideMenuBar: true,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
         }
@@ -322,7 +324,7 @@ function openFractmod(event, instance) {
         return {
             action: 'allow',
             overrideBrowserWindowOptions: {
-                icon: "./asset/image/mono 256.png",
+                icon: nativeImage.createFromPath(path.join(__dirname, 'asset', "image", 'mono 256.png')),
                 title: "Fractalium loading...",
                 autoHideMenuBar: true,
                 parent: win
@@ -336,6 +338,24 @@ function openFractmod(event, instance) {
             path: path.join(fractaHome, "gameDirectory")
         })
     })
+}
+function tray() {
+    const icon = nativeImage.createFromPath(path.join(__dirname, 'asset', "image", 'mono 256 white.png'))
+    const fracttray = new Tray(icon)
+    fracttray.setTitle("Fractalium")
+    fracttray.setToolTip('Fractalium')
+    const contextmenu = Menu.buildFromTemplate([
+        {
+            label: "Close",
+            type: "normal",
+            click: () => {
+                app.quit()
+            },
+
+        }
+    ])
+    fracttray.setContextMenu(contextmenu)
+    return fracttray
 }
 
 module.exports = {

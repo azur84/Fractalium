@@ -36,7 +36,34 @@ function getVersionObject(version) {
         modloaderversion: list[2]
     }
 }
+async function dependencies(dependencies) {
+    dependencies.forEach(async (e) => {
+        switch (e.relationType) {
+            case 3:
+                try {
+                    const instanceversion = getVersionObject(instance.config.version)
+                    const link = `v1/mods/${e.modId}/files?modLoaderType=${curseModloader[instanceversion.modloader]}&gameVersion=${instanceversion.mcversion}`
+                    curce(link).then((files) => {
+                        const f = files.data[0]
+                        if (instance.mods.some((m) => f.fileName == m.name)) return
+                        window.Fractmod.downloadMod(f, instance).then((mm) => {
+                            instance.mods.push(mm.mod)
+                            const but = document.getElementById(`fastdown${e.modId}`)
+                            if (but) {
+                                but.disabled = true
+                            }
 
+                        })
+                    })
+                } catch (error) {
+                    window.open(e.downloadUrl)
+                }
+                break
+            default:
+                break
+        }
+    })
+}
 async function search(option) {
     let load = document.getElementById("loading")
     load.classList.remove("hidden")
@@ -272,6 +299,7 @@ async function modal(e) {
                         if (instance.mods.some((m) => e.fileName == m.name)) return
                         try {
                             window.Fractmod.downloadMod(e, instance).then((mm) => {
+                                dependencies(e.dependencies)
                                 instance.mods.push(mm.mod)
                                 downloadbut.disabled = true
                                 downloadbut.title = 'version downloaded'
@@ -367,6 +395,7 @@ async function allMod(arg) {
                 //downloadbutton
                 let button = modall.appendChild(document.createElement("button"))
                 button.classList.add("downloadbut")
+                button.id = `fastdown${e.id}`
                 let releasefile
                 const instanceversion = getVersionObject(instance.config.version)
                 const link = `v1/mods/${e.id}/files?modLoaderType=${curseModloader[instanceversion.modloader]}&gameVersion=${instanceversion.mcversion}`
@@ -381,6 +410,7 @@ async function allMod(arg) {
                 })
                 button.addEventListener("click", async () => {
                     window.Fractmod.downloadMod(releasefile, instance).then((mm) => {
+                        dependencies(releasefile.dependencies)
                         instance.mods.push(mm.mod)
                         button.disabled = true
                         button.textContent = ' Downloaded'

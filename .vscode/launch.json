@@ -14,16 +14,28 @@
         }
     ],
     "configurations": [
-    {
-        "name": "Electron mc",
-        "program": "${workspaceFolder}/launcher.js",
-        "request": "launch",
-        "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
-        "skipFiles": [
-            "<node_internals>/**"
-        ],
-        "type": "node"
-    },
+        {
+            "command": "npm run make",
+            "name": "Run npm make",
+            "request": "launch",
+            "type": "node-terminal"
+        },
+        {
+            "command": "npm start",
+            "name": "Run npm start",
+            "request": "launch",
+            "type": "node-terminal"
+        },
+        {
+            "name": "Electron mc",
+            "program": "${workspaceFolder}/launcher.js",
+            "request": "launch",
+            "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
         {
             "name": "Launch Program",
             "program": "${workspaceFolder}/launchercore.js",
@@ -33,28 +45,28 @@
             ],
             "type": "node"
         },
-            {
-                "name": "Renderer",
-                "port": 9222,
-                "request": "attach",
-                "type": "chrome",
-                "webRoot": "${workspaceFolder}"
+        {
+            "name": "Renderer",
+            "port": 9222,
+            "request": "attach",
+            "type": "chrome",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Main",
+            "type": "node",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
+            "windows": {
+                "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"
             },
-            {
-                "name": "Main",
-                "type": "node",
-                "request": "launch",
-                "cwd": "${workspaceFolder}",
-                "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
-                "windows": {
-                    "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"
-                },
-                "args": [
-                    ".",
-                    "--remote-debugging-port=9222"
-                ],
-                "outputCapture": "std",
-                "console": "integratedTerminal"
-            }
+            "args": [
+                ".",
+                "--remote-debugging-port=9222"
+            ],
+            "outputCapture": "std",
+            "console": "integratedTerminal"
+        },
     ]
 }

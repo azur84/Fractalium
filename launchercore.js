@@ -302,7 +302,7 @@ class loaderLaunch {
             resizable: false,
             closable: false,
             show: false,
-            icon: "./asset/image/mono 256.png",
+            icon: nativeImage.createFromPath(path.join(__dirname, 'asset', "image", 'mono 256.png')),
             title: "Starting MC",
             webPreferences: {
                 preload: path.join(__dirname, "startMc", 'startMc.js'),
@@ -310,7 +310,7 @@ class loaderLaunch {
             }
         })
 
-        this.win.loadFile('./startMC/startMc.html').then(() => {
+        this.win.loadFile(path.join(__dirname, "startMC", "startMc.html")).then(() => {
             this.win.show()
             this.win.focus()
         })
@@ -502,7 +502,7 @@ async function generateVersionsObject() {
 
 async function createVersionsJson(reset = false) {
     let version = {}
-    const versionfile = getVersionsJson()
+    const versionfile = await getVersionsJson(false)
     if (!reset && versionfile) {
         version = versionfile
     }
@@ -564,15 +564,15 @@ function crack(winparent) {
             parent: basewin,
             modal: true,
             frame: false,
-            height:122,
-            width:254,
-            // resizable:false,
+            height: 122,
+            width: 254,
+            autoHideMenuBar:true,
+            resizable:false,
             webPreferences: {
                 preload: path.join(__dirname, "auth", "preauth.js")
             }
         })
         win.loadFile(path.join(__dirname, "auth", "auth.html"))
-        win.webContents.openDevTools()
         ipcMain.handleOnce("auth:finish", (event, name) => {
             const config = getConfigJson()
             config.auth = name
@@ -594,6 +594,7 @@ function firstLaunch() {
             minHeight: 644,
             icon: nativeImage.createFromPath(path.join(__dirname, 'asset', "image", 'mono 256.png')),
             title: "Fractalium loading...",
+            autoHideMenuBar:true,
             webPreferences: {
                 preload: path.join(__dirname, "first_launch", "pre_first_launch.js")
             }
@@ -605,8 +606,10 @@ function firstLaunch() {
         await new Promise((resolve, reject) => {
             win.webContents.addListener("dom-ready", resolve)
         })
+        win.setProgressBar(2)
         await createVersionsJson()
         await installJre()
+        win.setProgressBar(-1)
         // await new Promise((resolve, reject) => {
         //     setTimeout(resolve, 20000)
         // })
@@ -632,6 +635,7 @@ function firstLaunch() {
             ipcMain.handleOnce('Firstlaunch:mcram', (params, ram) => {
                 const config = getConfigJson()
                 config.ram = ram
+                config.valid = true
                 writeFileSync(path.join(fractaHome, "config.json"), JSON.stringify(config))
                 resolve()
             })
