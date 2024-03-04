@@ -6,12 +6,12 @@
     <title>Fractalium instance</title>
     <link rel="stylesheet" href="../index.css" />
     <link rel="stylesheet" href="./InstanceManager.css" />
+    <script src="../elementcore.js"></script>
     <script src="./InstanceManager.js"></script>
   </head>
-
   <body>
     <dialog id="chooseversion" class="chooseversion">
-      <input type="checkbox" name="" id="snapshot"> with snapshot
+      <input type="checkbox" name="" id="snapshot" /> with snapshot
       <div id="allversion" class="allversion"></div>
     </dialog>
     <dialog id="addmodpackmodal" class="addmodpackmodal">
@@ -39,7 +39,7 @@
       />
       <p>Nickname</p>
       <input type="text" name="" id="nickname" class="createtext" /><br /><br />
-      <button id="chooseversionbut">Choose version</button>
+      <button id="chooseversionbut" class="basic_button">Choose version</button>
       <p>Decription</p>
       <textarea
         name=""
@@ -49,14 +49,41 @@
         class="createdecription"
       ></textarea
       ><br /><br />
-      <button id="createinstance">Create</button>
+      <button id="createinstance" class="basic_button">Create</button>
+      <button id="import" class="basic_button">Import</button>
     </dialog>
-    <div id="instancelist" class="instancelist">
-      <div class="instance" id="add">
-        <h1>add<br />instance</h1>
-        <img src="../asset/image/mono 256 white.png" alt="" id="addmodpack" />
-        <div>
-          <p>create your modpack or import with a zip files.</p>
+    <dialog id="import_modal" class="dialog_modal import">
+      <button id="importfile" class="basic_button">Import with file</button>
+      <!-- <p>Url</p>
+      <input
+        type="text"
+        name=""
+        id="urljson"
+        class="createtext name"
+        title="Finish in .json"
+        placeholder="Finish in .json"
+      /> -->
+    </dialog>
+    <dialog id="instance_dialog" class="dialog_modal">
+      <img src="" alt="logo" class="logo" id="dialog_logo" />
+      <h1 id="instance_dialog_title"></h1>
+      <div class="mod_list_div">
+        <table id="mod_list" class="basic_table"></table>
+      </div>
+    </dialog>
+    <div id="instancelist" class="modal_list">
+      <div class="modal_container" id="add">
+        <img
+          class="modal_logo"
+          src="../asset/image/add-256.png"
+          id="addmodpack"
+        />
+        <div class="modal_div">
+          <div class="modal_cache"></div>
+          <div class="modal_content">
+            <h1>Add Modpack</h1>
+            <p>Create modpack and import with url or zip.</p>
+          </div>
         </div>
       </div>
     </div>

@@ -15,7 +15,7 @@ function bytesjava(bytes) {
 
 window.firstlaunch.install(async () => {
     const dialog = document.getElementById("dialog")
-    await dialogChange("Do you have got minecraft ?", dialog)
+    await dialogChange("You accept the minecraft EULA.\u000ADo you have got minecraft ?", dialog)
     const yes = document.getElementById("yes")
     const no = document.getElementById("no")
     no.disabled = false
@@ -39,7 +39,7 @@ window.firstlaunch.install(async () => {
     await new Promise((resolve, reject) => {
         setTimeout(resolve, 3000)
     })
-    await dialogChange("Setup your Minecraft Ram !", dialog)
+    await dialogChange("Setup your Minecraft Ram ! <br>You ", dialog)
     const rammin = document.getElementById("rammin")
     const rammax = document.getElementById("rammax")
     const minram = document.getElementById("minram")
@@ -48,7 +48,7 @@ window.firstlaunch.install(async () => {
     rammax.classList.remove('on')
     minram.disabled = false
     maxram.disabled = false
-    yes.textContent = "I am finisch"
+    yes.textContent = "I am finish"
     yes.disabled = false
     yes.addEventListener("click", async () => {
         window.firstlaunch.mcram({
@@ -60,7 +60,7 @@ window.firstlaunch.install(async () => {
         yes.disabled = true
         rammin.classList.add('on')
         rammax.classList.add('on')
-        await dialogChange("Configuration finisch ! : )", dialog)
+        await dialogChange("Configuration finish ! : )", dialog)
         await new Promise((resolve, reject) => {
             setTimeout(resolve, 5000)
         })

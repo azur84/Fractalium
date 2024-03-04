@@ -1,9 +1,4 @@
 @font-face {
-    font-family: "Forced Square";
-    src: url("../asset/fonts/forced_square/FORCED\ SQUARE.ttf");
-}
-
-@font-face {
     font-family: "Squared Display";
     src: url("../asset/fonts/squared_display/Squared\ Display.ttf");
 }
@@ -11,95 +6,6 @@
 @font-face {
     font-family: "Replay";
     src: url("../asset/fonts/replay/replay.ttf");
-}
-
-.instancelist {
-    display: flex;
-    flex-flow: wrap;
-    justify-content: flex-start;
-}
-
-.instancelist div.instance {
-    margin: 10px;
-    padding: 10px;
-    background: var(--modalcolor);
-    width: 256px;
-    height: 256px;
-    border-radius: 10px;
-    position: relative;
-}
-
-.instancelist div.instance:hover {
-    border-bottom-left-radius: 0px;
-    border-bottom-right-radius: 0px;
-}
-
-.instancelist div.instance img {
-    width: 256px;
-    height: 256px;
-    border-radius: 10px;
-    cursor: pointer;
-}
-
-/* .instancelist div.instance:hover img {} */
-
-.instancelist div.instance div {
-    height: 0px;
-    width: 256px;
-    border-radius: 10px;
-    border-top-left-radius: 0px;
-    border-top-right-radius: 0px;
-    padding: 10px;
-    position: absolute;
-    right: 0px;
-    background: var(--modalcolor);
-    transition-property: height, visibility;
-    transition-duration: 0.1s;
-    transition-timing-function: ease-in-out;
-    transition-delay: 0s;
-    visibility: hidden;
-}
-
-.instancelist div.instance:hover div {
-    height: 300px;
-    transition-duration: 0.3s;
-    transition-delay: 0;
-    visibility: visible;
-    z-index: 1;
-}
-
-.instancelist div.instance h1 {
-    transition-property: opacity;
-    transition-duration: 0.3s;
-    transition-timing-function: ease-in-out;
-    position: absolute;
-    color: white;
-    mix-blend-mode: exclusion;
-    text-align: center;
-    width: 256px;
-    top: 100px;
-    opacity: 0;
-    font-family: "Forced Square";
-}
-
-.instancelist div.instance:hover h1 {
-    opacity: 1;
-    transition-duration: 0.1s;
-}
-
-.instancelist div.instance div p {
-    font-family: "Forced Square";
-    color: var(--textcolor);
-    text-align: center;
-    transition-property: opacity;
-    transition-duration: 0.3s;
-    transition-timing-function: ease-in-out;
-    opacity: 0;
-    font-size: 30px;
-}
-
-.instancelist div.instance:hover div p {
-    opacity: 1;
 }
 
 .addmodpackmodal {
@@ -125,7 +31,7 @@
     width: 180px;
 }
 
-.addmodpackmodal button {
+/* .addmodpackmodal button {
     background-color: var(--textcolor);
     color: var(--modalcolor);
     font-family: "Forced Square";
@@ -133,13 +39,10 @@
 
 .addmodpackmodal button:hover {
     background-color: grey;
-}
+} */
 
 .imgh2right {
-    /* display: flex;
-    align-items: center; */
     position: relative;
-
 }
 
 .crlogo {
@@ -185,15 +88,31 @@
     background-color: var(--modifiedtextcolor);
 }
 
-button {
-    transition: color 0.3s ease-in-out;
-    font-family: "Replay";
-    background: none;
-    border: none;
-    color: white;
-    text-align: center;
+.import {
+    border-color: white;
+    border-width: 1px;
+    border-style: solid;
 }
 
-button:hover {
-    color:grey
+#instance_dialog {}
+
+#instance_dialog .logo {
+    height: 64px;
+    width: 64px;
+}
+
+.mods_icon {
+    height: 16px;
+    width: 16px;
+}
+
+.dialog_modal {
+    width: 80%;
+    height: 80%;
+}
+
+.mod_list_div {
+    height: 300px;
+    overflow: scroll;
+    overflow-x: clip;
 }

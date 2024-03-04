@@ -281,11 +281,11 @@ body {
     height: 16px;
 }
 
-.downloadbut:before {
+.downloadbut::before {
     content: url("../asset/image/arrow\ white.png");
 }
 
-.downloadbut:disabled:before {
+.downloadbut:disabled::before {
     content: url("../asset/image/check\ white.png");
 }
 

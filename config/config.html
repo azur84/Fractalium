@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fractalium Config</title>
+    <link rel="stylesheet" href="../index.css" />
+    <link rel="stylesheet" href="./config.css" />
+    <script src="config.js"></script>
+  </head>
+  <body>
+    <h1 class="title">Fractalium Config</h1>
+    <h2 id="credit" class="subtitle">Credit</h2>
+    <p class="text" id="font-credit">
+      Font Credit :<br />
+      ALL fonts come from "https://www.dafont.com".<br />Thank you to the font
+      designers. <br />"Blocked"
+      (http://fontstruct.com/fontstructions/show/482418) created by "Sabata"
+      with fontstruct LICENSE (http://creativecommons.org/licenses/by-sa/3.0/)
+      <br />"Forced Square" by "Friendly Fonts" <br />"G-Type" by "Goma Shin"
+      <br />"Inversion" by "Avery Byrd" <br />"Minercraftory" by "Jayvee
+      Enaguas" <br />"pixel digivolve" by "Pixel Sagas" LICENSE
+      "pixel_digivolve/Font License.txt" <br />"Pointless" by "LukeMans"
+      <br />"Pro Lamina" by "CabreraTypo" <br />"Rektec" by "Axel Lymphos"
+      <br />"Replay" by "Christofer Lundholm" <br />"Squared Display" by "Vikas
+      Kumar" <br />"SquareFont" by "Bou Fonts" <br />"Suplex" by "Helge Barske"
+      <br />"symtext" by "Pixel Sagas" LICENSE "symtext/Font License.txt"
+    </p>
+    <p class="text" id="node-credit">
+      Nodejs package Credit :<br />
+      "adm-zip",<br />
+      "axios",<br />
+      "dotenv",<br />
+      "minecraft-launcher-core",<br />
+      "msmc",<br />
+      "tar",<br />
+      "xml2js",<br />
+      "zlib",<br />
+      "electron",<br />
+      "electron-forge"
+    </p>
+    <p class="text" id="other-credit">
+      Other credit :<br />
+      Overwolf's Curseforge api for Fractamod,<br />
+      Minecraft EULA : https://www.minecraft.net/en-us/eula
+    </p>
+    <h2 id="mc-config" class="subtitle">Minecraft Configuration</h2>
+    <p class="label">Keep Launcher at launch :</p>
+    <input type="checkbox" name="" id="keeplaunch" />
+    <p class="label" id="mc-ram">Minecraft Ram :</p>
+    <p class="label">] Ram min</p>
+    <input type="range" name="minram" id="minram" step="1048576" />
+    <input type="text" name="" id="minraminput" />
+    <p class="label">] Ram max</p>
+    <input type="range" name="maxram" id="maxram" step="1048576" />
+    <input type="text" name="" id="maxraminput" /><br />
+    <button class="basic_button" id="saveram" disabled>Save Ram</button>
+    <h2 id="mc-config" class="subtitle">Authentification :</h2>
+    <button class="basic_button config_button" id="authxbox">] With Xbox</button><br>
+    <button class="basic_button config_button" id="authnickname">] With Nickname</button>
+  </body>
+</html>

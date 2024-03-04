@@ -1,7 +1,7 @@
 const { Client, Authenticator } = require('minecraft-launcher-core')
 const { Auth } = require("msmc")
 const { exec } = require('child_process');
-const { rmSync, existsSync, createWriteStream, mkdirSync, createReadStream, renameSync, readSync, readdirSync, writeFileSync, rmdirSync } = require('fs')
+const { rmSync, existsSync, createWriteStream, mkdirSync, createReadStream, renameSync, readSync, readdirSync, writeFileSync, rmdirSync, symlinkSync } = require('fs')
 const path = require("path")
 const axios = require("axios")
 const { x } = require('tar');
@@ -37,6 +37,12 @@ function download(url, destination) {
         }
     })
 
+}
+
+function linker(path1, path2) {
+    if (existsSync(path2)) return
+    mkdirSync(path1, { recursive: true })
+    symlinkSync(path1, path2, "dir")
 }
 
 async function installJre(useplatform = platform(), usearch = arch()) {
@@ -145,14 +151,23 @@ class Instance {
     JrePath = getJrePath()
     constructor(name, version, config = getConfigJson()) {
         this.opt = {
-            root: this.fractaHome,
-            cache: `${this.fractaHome}/cache`,
+            root: path.join(this.fractaHome, "gameDirectory", name),
+            cache: path.join(this.fractaHome, "cache"),
             memory: config.ram,
             javaPath: getJrePath(),
             overrides: {
-                gameDirectory: `${this.fractaHome}/gameDirectory/${name}`
+                maxSockets: 1,
+                fw: {
+                    baseUrl: 'https://github.com/ZekerZhayard/ForgeWrapper/releases/download/',
+                    version: '1.6.0',
+                    sh1: '3c6712d64a42e4ec200909912e72749499aaca79',
+                    size: 28679,
+                }
             },
         }
+        linker(path.join(this.fractaHome, "libraries"), path.join(this.opt.root, "libraries"))
+        linker(path.join(this.fractaHome, "assets"), path.join(this.opt.root, "assets"))
+        linker(path.join(this.fractaHome, "versions"), path.join(this.opt.root, "versions"))
         if (typeof config.auth === "object" && config.auth !== null) {
             if (Authenticator.validate(config.auth.access_token, config.auth.client_token)) {
                 this.opt.authorization = config.auth
@@ -189,7 +204,7 @@ class Instance {
                         if (!existsSync(`${this.fractaHome}/versions/fabric-loader-${version.modloader.version}-${version.mcversion.number}/fabric-loader-${version.modloader.version}-${version.mcversion.number}.jar`)) {
                             await new Promise((resolve, reject) => {
                                 exec(
-                                    `"${this.JrePath}" -jar ${this.fractaHome}/download/${version.modloader.name}-installer.jar client -dir "${this.fractaHome}" -noprofile -downloadMinecraft -loader "${version.modloader.version}" -mcversion "${version.mcversion.number}"`,
+                                    `"${this.JrePath}" -jar ${path.join(this.fractaHome, "download", `${version.modloader.name}-installer.jar`)} client -dir "${this.fractaHome}" -noprofile -downloadMinecraft -loader "${version.modloader.version}" -mcversion "${version.mcversion.number}"`,
                                     (error, stdout, stderr) => {
                                         if (error) {
                                             console.error(`Erreur d'exécution : ${error}`)
@@ -203,7 +218,9 @@ class Instance {
                                         resolve()
                                     })
                             })
-                            rmSync(`${this.fractaHome}/versions/fabric-loader-${version.modloader.version}-${version.mcversion.number}/fabric-loader-${version.modloader.version}-${version.mcversion.number}.jar`)
+                            try {
+                                rmSync(path.join(this.fractaHome, "versions", `fabric-loader-${version.modloader.version}-${version.mcversion.number}`, `fabric-loader-${version.modloader.version}-${version.mcversion.number}.jar`))
+                            } catch (error) { }
                         }
                         this.opt.version.custom = `fabric-loader-${version.modloader.version}-${version.mcversion.number}`
                         break
@@ -234,6 +251,7 @@ class Instance {
                 this.opt.version.custom = version.modloader.custom
                 break
         }
+        // this.opt.overrides.minecraftJar = path.join(this.opt)
         let namemodloader
         let versionmodloader
         try {
@@ -289,9 +307,11 @@ class Instance {
 class loaderLaunch {
     win
     constructor() {
-        BrowserWindow.getAllWindows().forEach((e) => {
-            e.hide()
-        })
+        if (!(getConfigJson().keepLaunch)) {
+            BrowserWindow.getAllWindows().forEach((e) => {
+                e.hide()
+            })
+        }
         this.win = new BrowserWindow({
             width: 800,
             height: 600,
@@ -300,7 +320,6 @@ class loaderLaunch {
             frame: false,
             movable: false,
             resizable: false,
-            closable: false,
             show: false,
             icon: nativeImage.createFromPath(path.join(__dirname, 'asset', "image", 'mono 256.png')),
             title: "Starting MC",
@@ -310,14 +329,15 @@ class loaderLaunch {
             }
         })
 
-        this.win.loadFile(path.join(__dirname, "startMC", "startMc.html")).then(() => {
+        this.win.loadFile(path.join(__dirname, "startMc", "startMc.html")).then(() => {
             this.win.show()
             this.win.focus()
+            this.win.setProgressBar(2)
         })
 
     }
     send(message) {
-        this.win.webContents.send("load", message)
+        this.win?.webContents?.send("load", message)
     }
     waitload() {
         return new Promise((resolve, reject) => {
@@ -401,7 +421,28 @@ async function generateVersionsObject() {
             }))
         })
         await Promise.all(promisesvers).then(() => {
-            allversion.forge = mcvers(links)
+            const forge = mcvers(links)
+            function sortVersion(versionA, versionB) {
+                const partsA = versionA.split('.').map(part => parseInt(part));
+                const partsB = versionB.split('.').map(part => parseInt(part));
+
+                for (let i = 0; i < Math.max(partsA.length, partsB.length); i++) {
+                    const partA = partsA[i] || 0;
+                    const partB = partsB[i] || 0;
+
+                    if (partA !== partB) {
+                        return partA - partB;
+                    }
+                }
+
+                return 0;
+            }
+            const sortedKeys = Object.keys(forge).sort(sortVersion).reverse()
+            const sortedforge = {}
+            sortedKeys.forEach(key => {
+                sortedforge[key] = forge[key]
+            })
+            allversion.forge = sortedforge
         })
     } catch (error) {
         console.error('Erreur lors de forge :', error);
@@ -476,6 +517,7 @@ async function generateVersionsObject() {
                         }
                     }
                 } catch (error) {
+                    if (error.message == "Cannot read properties of undefined (reading 'mcversion')") return
                     console.error(`error with fabric ${e} ${f} continue... error : ${error}`)
                 }
 
@@ -508,6 +550,7 @@ async function createVersionsJson(reset = false) {
     }
     Object.assign(version, await generateVersionsObject())
     const fractaHome = process.env.fractaHome || getFractaHome()
+    mkdirSync(fractaHome, { recursive: true })
     writeFileSync(path.join(fractaHome, "versions.json"), JSON.stringify(version))
     console.log("Version.json create")
     return version
@@ -534,6 +577,7 @@ function getConfigJson() {
                 max: "1G"
             }
         }
+        mkdirSync(`${fractaHome}/download/jre`, { recursive: true })
         writeFileSync(path.join(fractaHome, "config.json"), JSON.stringify(defaultconfig))
         return false
     }
@@ -566,8 +610,8 @@ function crack(winparent) {
             frame: false,
             height: 122,
             width: 254,
-            autoHideMenuBar:true,
-            resizable:false,
+            autoHideMenuBar: true,
+            resizable: false,
             webPreferences: {
                 preload: path.join(__dirname, "auth", "preauth.js")
             }
@@ -594,7 +638,7 @@ function firstLaunch() {
             minHeight: 644,
             icon: nativeImage.createFromPath(path.join(__dirname, 'asset', "image", 'mono 256.png')),
             title: "Fractalium loading...",
-            autoHideMenuBar:true,
+            autoHideMenuBar: true,
             webPreferences: {
                 preload: path.join(__dirname, "first_launch", "pre_first_launch.js")
             }
@@ -648,6 +692,30 @@ function firstLaunch() {
 
 }
 
+function manifestModpack(manifest) {
+    const modloader = manifest.minecraft.modLoaders[0].id.split("-")
+    const mc = manifest.minecraft.version
+    const name = manifest.name
+    const files = manifest.files.map((file) => {
+        const url = `https://api.curseforge.com/v1/mods/${file.projectID}/files/${file.fileID}`
+        const id = file.projectID
+        const fileid = file.fileID
+        return {
+            url,
+            id,
+            fileid
+        }
+    })
+    const modloadername = `${modloader[0]}-${mc}-${modloader[1]}`
+    const overrides = manifest.overrides
+    return {
+        files,
+        name,
+        modloadername,
+        overrides
+    }
+}
+
 module.exports = {
     getVersionsJson,
     Instance,
@@ -660,5 +728,6 @@ module.exports = {
     createVersionsJson,
     firstLaunch,
     installJre,
-    crack
+    crack,
+    manifestModpack
 }

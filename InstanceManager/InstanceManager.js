@@ -1,26 +1,52 @@
 function addinstanceViewer(instance) {
     const instancelist = document.getElementById("instancelist")
-    const instancediv = instancelist.appendChild(document.createElement("div"))
-    instancediv.classList.add("instance")
-    const title = instancediv.appendChild(document.createElement("h1"))
+    const modal = document.createElement("div")
+    // title
+    const title = modal.appendChild(document.createElement("h1"))
     title.innerHTML = instance.config.nickname || instance.name
-    const logo = instancediv.appendChild(document.createElement("img"))
-    logo.setAttribute("src", instance.config.icon || "../asset/image/mono 256 white.png")
-    const modal = instancediv.appendChild(document.createElement("div"))
+    // decription
     const decription = modal.appendChild(document.createElement("p"))
     decription.innerHTML = instance.config.decription || instance.config.nickname || instance.name
+    // Launch
     const launch = modal.appendChild(document.createElement("button"))
+    launch.classList.add("basic_button")
     launch.innerHTML = "launch"
     launch.addEventListener("click", () => {
         window.Instance.start(instance)
     })
-    if (instance.config.version.includes("vanilla")) return
-    const Fractmod = modal.appendChild(document.createElement("button"))
-    Fractmod.innerHTML = "View in FractMod"
-    Fractmod.addEventListener("click", () => {
-        window.Fractmod.open(instance.name)
+    // openfolder
+    const openfolder = modal.appendChild(document.createElement("button"))
+    openfolder.classList.add("basic_button")
+    openfolder.innerHTML = "open in folder"
+    openfolder.addEventListener("click", () => {
+        window.Instance.openfolder(instance)
     })
-
+    // Fractmod
+    if (!instance.config.version.includes("vanilla")) {
+        const fractmod = modal.appendChild(document.createElement("button"))
+        fractmod.classList.add("basic_button")
+        fractmod.innerHTML = "View in FractMod"
+        fractmod.addEventListener("click", () => {
+            window.Fractmod.open(instance.name)
+        })
+    }
+    // Delete
+    const deletebutton = modal.appendChild(document.createElement("button"))
+    deletebutton.classList.add("basic_button")
+    deletebutton.innerHTML = "Delete"
+    deletebutton.addEventListener("click", async () => {
+        const re = await window.Instance.delete(instance)
+        if (re) {
+            document.location.reload()
+        }
+    })
+    // Modal
+    const icon = instance.config.icon || "../asset/image/mono 256 white.png"
+    const newmodal = new Modal(icon, modal)
+    newmodal.modal_logo.addEventListener("click", () => {
+        showIntanceDialog(instance)
+    })
+    instancelist.appendChild(newmodal.add())
 }
 function setVersion() {
     return new Promise(async (resolve, reject) => {
@@ -44,11 +70,11 @@ function setVersion() {
                 setVis(vis)
             }
             document.getElementById("snapshot").addEventListener("change", snap)
-            Object.keys(current).forEach((name) => {
-                if (name == "installer") return
+            Object.keys(current).filter((name) => {
+                if (name == "installer") return false
                 if (!document.getElementById("snapshot").checked) {
                     try {
-                        if (current[name].mcversion.type != "release") return
+                        if (current[name].mcversion.type != "release") return false
                     } catch (error) {
                         if (!(Object.keys(current[name]).some((v) => {
                             try {
@@ -56,9 +82,11 @@ function setVersion() {
                             } catch (error) {
                                 return false
                             }
-                        }))) return
+                        }))) return false
                     }
                 }
+                return true
+            }).forEach((name) => {
                 const button = allversion.appendChild(document.createElement("button"))
                 button.innerText = name
                 button.addEventListener("click", () => {
@@ -85,6 +113,53 @@ function setVersion() {
         })
 
     })
+}
+function showIntanceDialog(instance) {
+    const modal = document.getElementById("instance_dialog")
+    const logo = document.getElementById("dialog_logo")
+    logo.src = instance.config.icon || "../asset/image/mono 256 white.png"
+    const title = document.getElementById("instance_dialog_title")
+    title.textContent = instance.config.nickname || instance.name
+    const modtable = document.getElementById("mod_list")
+    modtable.innerHTML = ""
+    const trth = document.createElement("tr")
+    const thicon = trth.appendChild(document.createElement("th"))
+    const thpicon = thicon.appendChild(document.createElement("p"))
+    thpicon.textContent = "Icon"
+    const thname = trth.appendChild(document.createElement("th"))
+    const thpname = thname.appendChild(document.createElement("p"))
+    thpname.textContent = "File name"
+    const thaction = trth.appendChild(document.createElement("th"))
+    const thpaction = thaction.appendChild(document.createElement("p"))
+    thpaction.textContent = "Action"
+    modtable.appendChild(trth)
+    const mods = instance.mods.forEach(async (e, index) => {
+        const icon = await window.Instance.getModIcon(e.path)
+        const tr = document.createElement("tr")
+        const tdlogo = tr.appendChild(document.createElement("td"))
+        const logo = tdlogo.appendChild(document.createElement("img"))
+        logo.src = icon
+        logo.classList.add("mods_icon")
+        const tdname = tr.appendChild(document.createElement("td"))
+        const name = tdname.appendChild(document.createElement("p"))
+        name.textContent = e.name
+        //#region action
+        const tdaction = tr.appendChild(document.createElement('td'))
+        const actionmenu = new Modal_Menu("action")
+        // actionmenu.addButton("enabled")
+        // actionmenu.addButton("disabled")
+        actionmenu.addButton("delete", undefined, () => {
+            window.Instance.deleteMod(e.path).then((e) => {
+                if (!e) return
+                instance.mods.splice(index, 1)
+                tr.remove()
+            })
+        })
+        tdaction.appendChild(actionmenu.add())
+        //#endregion action
+        modtable.appendChild(tr)
+    })
+    modal.showModal()
 }
 
 function wvalid(string, regexp) {
@@ -144,5 +219,12 @@ document.addEventListener("DOMContentLoaded", (e) => {
         document.getElementById("addmodpackmodal").close()
         window.Instance.newInstance(parm)
         document.location.reload()
+    })
+    document.getElementById("import").addEventListener("click", () => {
+        document.getElementById("import_modal").showModal()
+    })
+    document.getElementById("importfile").addEventListener("click", async () => {
+        const rep = await window.Instance.import("file")
+        if (rep) document.location.reload()
     })
 })

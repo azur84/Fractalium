@@ -1,11 +1,262 @@
+/* #region style*/
 :root {
-    --textcolor: whitesmoke;
-    --modifiedtextcolor: rgb(180, 180, 180);
-    --modalcolor: black;
+    /* #region basic */
     --background: rgb(34, 34, 34);
+    --textcolor: whitesmoke;
+    /* #endregion basic */
+    /* #region modal */
+    --modalcolor: black;
+    --modal_menu_head_color: black;
+    --modal_menu_color: rgb(36, 36, 36);
+    --modal_menu_hover_color: rgb(100, 100, 100);
+    /* #endregion modal */
+    /* #region button */
+    --button_color: white;
+    --button_hover_color: grey;
+    --button_disabled_color: rgb(68, 68, 68);
+    /* #endregion button*/
+    /* #region table */
+    --table_color: black;
+    --table_th_color: rgb(35, 35, 35);
+    --table_tr_hover_color: rgb(55, 55, 55);
+    --table_hover_color: grey;
+    /* #endregion table */
     --searchBarcolor: black;
 }
+
+/* #region fonts */
+@font-face {
+    font-family: "Forced Square";
+    src: url("./asset/fonts/forced_square/FORCED\ SQUARE.ttf");
+}
+
+@font-face {
+    font-family: "Squared Display";
+    src: url("./asset/fonts/squared_display/Squared\ Display.ttf");
+}
+
+@font-face {
+    font-family: "Replay";
+    src: url("./asset/fonts/replay/replay.ttf");
+}
+
+/* #endregion fonts*/
+
+/* #endregion style*/
 
 body {
     background: var(--background);
 }
+
+/* #region icon */
+.download_icon::before {
+    content: url("./asset/image/arrow\ white.png");
+}
+
+.valid_icon::before {
+    content: url("./asset/image/check\ white.png");
+}
+
+/* #endregion icon */
+/* #region button */
+.basic_button {
+    transition: color 0.3s ease-in-out;
+    font-family: "Replay";
+    background: none;
+    border: none;
+    color: var(--button_color);
+    text-align: center;
+    cursor: pointer;
+}
+
+.basic_button:hover {
+    color: var(--button_hover_color);
+}
+
+.basic_button:disabled {
+    color: var(--button_disabled_color)
+}
+
+/* #endregion button */
+/* #region modal */
+.modal_container {
+    transition-property: width, filter;
+    transition-duration: 1s;
+    transition-delay: 0s, 0.5s;
+    transition-timing-function: ease-in-out;
+    border-radius: 10px;
+    margin: 10px;
+    height: min-content;
+    width: min-content;
+    position: relative;
+    text-align: center;
+}
+
+.modal_cache {
+    height: 256px;
+    width: 256px;
+    margin: 10px;
+}
+
+.modal_div {
+    transition: none;
+    position: absolute;
+    visibility: hidden;
+    width: 0px;
+    height: 0px;
+    top: -10px;
+    left: -10px;
+    z-index: 1;
+    border-radius: 10px;
+}
+
+.modal_container:hover .modal_div {
+    transition-property: height, width;
+    transition-duration: 0.3s;
+    transition-delay: 0s;
+    transition-timing-function: ease-in-out;
+    visibility: visible;
+    color: var(--textcolor);
+    width: 276px;
+    height: 600px;
+    background-color: var(--modalcolor);
+}
+
+.modal_logo {
+    border-radius: 10px;
+    position: relative;
+    z-index: 0;
+    height: 256px;
+    width: 256px;
+}
+
+.modal_container:hover .modal_logo {
+    z-index: 2;
+    cursor: pointer;
+}
+
+.modal_list {
+    display: flex;
+    flex-flow: wrap;
+    justify-content: space-around;
+    transition: height 0.3s ease-in-out;
+}
+
+.modal_content {
+    filter: opacity(0);
+    font-family: "Forced Square";
+    margin: 5px;
+}
+
+.modal_container:hover .modal_content {
+    transition-property: filter;
+    transition-duration: 0.3s;
+    transition-delay: 0.3s;
+    transition-timing-function: ease-in-out;
+    filter: opacity(1);
+}
+
+.dialog_modal {
+    background-color: var(--modalcolor);
+    color: var(--textcolor);
+    border: none;
+    font-family: "Squared Display";
+}
+
+.modal_menu[active] {
+    background-color: var(--modal_menu_color);
+}
+
+.modal_menu * {
+    margin: 0px;
+}
+
+.modal_menu .modal_menu_content {
+    display: none;
+    position: absolute;
+}
+
+.modal_menu button {
+    transition-property: background-color;
+    transition-duration: 0.5s;
+    width: 100%;
+    background-color: var(--modal_menu_head_color);
+    border: none;
+    color: var(--textcolor);
+    width: 60px;
+    font-family: "Replay";
+    word-spacing: 5px;
+    font-size: 1.1em;
+    font-weight: lighter;
+    cursor: pointer;
+}
+
+.modal_menu button:hover {
+    background-color: var(--modal_menu_hover_color);
+}
+
+.modal_menu .modal_menu_content button {
+    background-color: var(--modal_menu_color);
+}
+
+.modal_menu .modal_menu_content button:hover {
+    background-color: var(--modal_menu_hover_color);
+}
+
+.modal_menu[active] .modal_menu_content {
+    display: block;
+    z-index: 1;
+}
+
+/* #endregion modal */
+/* #region table*/
+.basic_table {
+    background-color: var(--table_color);
+}
+
+.basic_table * {
+    padding: 0px;
+}
+
+.basic_table tr {
+    transition-property: width, background-color;
+    transition-duration: 0.5s;
+    text-align: center;
+}
+
+.basic_table tr:hover {
+    background-color: var(--table_tr_hover_color);
+}
+
+.basic_table th {
+    transition-property: width, background-color;
+    transition-duration: 0.5s;
+    text-align: center;
+    border: 3px;
+    background-color: var(--table_th_color);
+}
+
+.basic_table th:hover {
+    background-color: var(--table_hover_color);
+}
+
+.basic_table th *:not(.modal_menu *) {
+    margin: 3px;
+}
+
+.basic_table td {
+    transition-property: width, background-color;
+    transition-duration: 0.5s;
+    text-align: center;
+}
+
+.basic_table td:hover {
+    background-color: grey;
+}
+
+.basic_table td *:not(.modal_menu *) {
+    margin: 3px;
+}
+
+/* #endregion table*/
+/* End */
