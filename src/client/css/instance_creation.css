@@ -1,0 +1,128 @@
+@import url("./versions_background.css") layer;
+
+.modloader_select_div {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.modloader_select_div div {
+    height: 30%;
+    width: 30%;
+    background: var(--important-background);
+    border-radius: 5px;
+    cursor: pointer;
+    user-select: none;
+    margin: 5px;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    transition-property: background;
+    transition-duration: 0.2s;
+    transition-timing-function: ease-in-out;
+    text-align: center;
+}
+
+.modloader_select_div div:hover {
+    background: var(--important-hover);
+}
+
+.modloader_select_div div svg {
+    height: 17vw;
+    width: 17vw;
+}
+
+.modloader_select_div div h2 {
+    text-align: center;
+    font-size: 4vw;
+    margin: 0;
+    color: var(--app-button-color);
+}
+
+.questionnaire_instance {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.questionnaire_instance h4 {
+    margin: 5px;
+    font-size: 2em;
+}
+
+.vanilla_version_div {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.subversions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    border-right: solid #00000040;
+    border-bottom: solid #00000040;
+    backdrop-filter: blur(2px);
+}
+
+.subversions a {
+    font-weight: bold;
+    text-align: center;
+    font-size: x-large;
+    color: var(--app-button-color);
+    cursor: pointer;
+    border: solid #00000040;
+    border-bottom: none;
+    border-right: none;
+    margin: 0px;
+    flex: auto;
+    transition-property: background;
+    transition-timing-function: ease-in-out;
+    transition-duration: 0.2s;
+    padding: 1px;
+}
+
+.subversions a:hover {
+    background: var(--important-hover);
+}
+
+.main_version {
+    width: 25vw;
+    border-radius: 3px;
+    /* background: url("../assets/images/minecraft_versions/1_0.jfif"); */
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin: 10px;
+}
+
+.main_version h4 {
+    text-align: center;
+}
+
+.vannilla_version_div_snapshoot {
+    overflow: auto;
+    height: 78vh;
+}
+
+.modloader_version_div div h4 {
+    text-align: center;
+    cursor: pointer;
+    transition-property: background;
+    transition-timing-function: ease-in-out;
+    transition-duration: 0.2s;
+    border-radius: 5px;
+}
+
+.modloader_version_div div h4:hover {
+    background: var(--important-hover);
+}
+
+.modloader_version_div {
+    background-color: var(--important-background);
+    border-radius: 5px;
+    height: 78vh;
+    overflow: auto;
+}

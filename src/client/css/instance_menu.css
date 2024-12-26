@@ -1,0 +1,63 @@
+.instances_menu_contener {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: center;
+    padding: 3px;
+}
+
+.settings_menu,
+.instances_menu_element,
+.instances_menu_create {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    height: 30px;
+    flex-wrap: wrap;
+    align-items: center;
+    align-content: center;
+    padding: 3px;
+    cursor: pointer;
+    user-select: text;
+    transition-property: background;
+    transition-duration: 0.2s;
+    transition-timing-function: ease-in-out;
+    border-radius: 5px;
+}
+
+.settings_menu:hover,
+.instances_menu_element:hover,
+.instances_menu_create:hover {
+    background: var(--important-background);
+}
+
+.instances_menu_create {
+    margin-top: 20px;
+}
+
+.instances_menu_create:first-child {
+    margin-top: 0px;
+}
+
+.instances_menu_create h4,
+.settings_menu h4,
+.instances_menu_element h4 {
+    margin: 0px;
+    text-overflow: ellipsis;
+    color: var(--app-button-color);
+}
+
+.instances_menu_create svg,
+.settings_menu svg,
+.instances_menu_element img,
+.instances_menu_element svg {
+    width: 25px;
+    height: 25px;
+    margin-right: 5px;
+    fill: var(--app-button-color);
+}
+
+.instances_select {
+    height: calc(100vh - 130px);
+    overflow: overlay;
+}

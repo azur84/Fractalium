@@ -1,43 +1,52 @@
 {
-  "name": "fractaliumlauncher",
+  "name": "fractalium_launcher",
+  "displayName": "Fractalium Launcher",
   "version": "0.1.0",
   "description": "Fractalium launcher",
   "main": "app.js",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "help": "electron-forge help make",
-    "start": "electron-forge start",
-    "package": "electron-forge package",
-    "make": "electron-forge make",
-    "fastmake": "electron-forge make --skip-package"
+    "dev": "concurrently \"node developement.js\" \"vite --mode developement\"",
+    "build": "node packager.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/azur84/fratalium-launcher.git"
   },
-  "author": "azur84, Fractalium Team",
-  "license": "GNU-3",
+  "author": "Azur84, Fractalium Team",
+  "license": "UNLICENSED",
   "bugs": {
     "url": "https://github.com/azur84/fratalium-launcher/issues"
   },
   "homepage": "https://github.com/azur84/fratalium-launcher#readme",
-  "dependencies": {
-    "adm-zip": "^0.5.10",
-    "axios": "^1.6.1",
-    "dotenv": "^16.3.1",
-    "minecraft-launcher-core": "^3.18.0",
-    "msmc": "^4.1.0",
-    "tar": "^6.2.0",
-    "xml2js": "^0.6.2",
-    "zlib": "^1.0.5"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "@electron-forge/cli": "^7.2.0",
-    "@electron-forge/maker-deb": "^7.2.0",
-    "@electron-forge/maker-rpm": "^7.2.0",
-    "@electron-forge/maker-squirrel": "^7.2.0",
-    "@electron-forge/maker-zip": "^7.2.0",
-    "@electron-forge/plugin-auto-unpack-natives": "^7.2.0",
-    "electron": "^27.2.4"
+    "@types/adm-zip": "^0.5.7",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "adm-zip": "^0.5.16",
+    "concurrently": "^9.1.0",
+    "copy-webpack-plugin": "^12.0.2",
+    "crystal": "git+https://github.com/azur84/Crystal_core.git#master",
+    "dotenv": "16.4.7",
+    "electron": "^27.3.11",
+    "electron-builder": "^25.1.8",
+    "fast-xml-parser": "^4.5.1",
+    "msmc": "^4.1.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.1.0",
+    "tar": "^6.2.1",
+    "ts-loader": "^9.5.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2",
+    "vite": "^5.4.11",
+    "vite-plugin-svgr": "^4.3.0",
+    "webpack": "^5.97.1",
+    "webpack-cli": "^5.1.4"
+  },
+  "build": {
+    "appId": "fr.fractalium"
   }
 }

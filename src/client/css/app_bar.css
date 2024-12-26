@@ -1,0 +1,92 @@
+#app_bar {
+    -webkit-app-region: drag;
+    user-select: none;
+    height: 35px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+#app_bar .window_buttons {
+    display: flex;
+    flex-direction: row;
+}
+
+.app_bar_left {
+    display: flex;
+    justify-content: left;
+}
+
+.app_bar_right {
+    display: flex;
+    justify-content: right;
+}
+
+.window_button {
+    -webkit-app-region: no-drag;
+    cursor: pointer;
+    width: 35px;
+    height: 35px;
+    background-color: transparent;
+    border: 0px;
+    padding: 5px;
+}
+
+.window_button svg {
+    fill: var(--app-button-color);
+}
+
+.window_button:hover {
+    background-color: #ffffff38;
+}
+
+#app_bar_title {
+    margin: 0px;
+}
+
+.app_bar_title_div {
+    display: flex;
+}
+
+.assets_logo {
+    width: 35px;
+    height: 35px;
+}
+
+.accounts_manager {
+    -webkit-app-region: no-drag;
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    margin: 1px;
+    border-radius: 5px;
+    cursor: pointer;
+    justify-content: center;
+}
+
+.accounts_manager:hover,
+.accounts_manager.selected {
+    background-color: var(--important-hover);
+}
+
+.accounts_manager p {
+    text-align: center;
+    margin: 0px;
+    padding: 0px;
+    color: var(--app-button-color);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.accounts_menu {
+    position: absolute;
+    top: 35px;
+    background-color: var(--important-background);
+    backdrop-filter: blur(5px);
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.account_div:hover {
+    background-color: var(--important-hover);
+    border-radius: 3px;  
+}

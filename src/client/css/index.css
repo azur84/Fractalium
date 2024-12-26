@@ -1,0 +1,57 @@
+@import url("./app_bar.css") layer;
+@import url("./instance_menu.css") layer;
+@import url("./instance_creation.css") layer;
+@import url("./instance_side_menu.css") layer;
+
+:root {
+    --gradient-start: #ff7e5f;
+    --gradient-end: #feb47b;
+    --gradient-direction: 135deg;
+    /* --background: linear-gradient(var(--gradient-direction), var(--gradient-start), var(--gradient-end)); */
+    --background: url("../assets/images/background/desert.jpg");
+
+    --important-background: #ffffff4f;
+    --important-hover: #ffffff69;
+    --app-button-color: #ffffff;
+}
+
+html,
+body {
+    margin: 0;
+    height: 100%;
+    padding: 0;
+    background: var(--background);
+    background-size: cover;
+    background-position: center;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column
+}
+
+#app_container {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+}
+
+#side_menu {
+    width: min(30vw, 200px);
+    height: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+#view {
+    background: var(--important-background);
+    flex-grow: 1;
+    padding: 20px;
+    box-sizing: border-box;
+    border-radius: 5px;
+    margin: 5px;
+    height: 98%;
+    width: max(70vw, calc(100vw - 200px));
+}
+
+a {
+    text-decoration: none;
+}
